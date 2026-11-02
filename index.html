@@ -109,149 +109,85 @@
     <section class="reef-map-section section-pad container" id="map">
       <div class="section-heading">
         <p class="eyebrow">02.5 / Географія рифу</p>
-        <span class="section-note">Жива мапа Поділля · 200 км бар'єру</span>
+        <span class="section-note">Жива мапа Поділля · 200-кілометровий бар'єр</span>
       </div>
       <div class="map-intro">
         <h2>Єдиний у світі  <br><em>береговий риф на суші.</em></h2>
         <div class="map-intro-text">
-          <p>Товтри простягаються дугою на 200 кілометрів через Поділля до Молдови. Це не тектонічні гори, а біологічна споруда, побудована колоніями вапнякових організмів уздовж берегової лінії міоценового моря.</p>
-          <div class="map-mode-switch" role="group" aria-label="Режим відображення мапи">
-            <button type="button" class="map-mode-btn active" id="map-mode-today" aria-pressed="true">Сучасний рельєф</button>
-            <button type="button" class="map-mode-btn" id="map-mode-sea" aria-pressed="false">Міоценове море (14 млн років)</button>
-          </div>
+          <p>Товтри простягаються дугою на 200 кілометрів через Поділля від Сатанова до Дністра. Натисніть на будь-який із 5 круглих осередків на рельєфній мапі або оберіть локацію в списку, щоб відкрити її геологічну історію.</p>
         </div>
       </div>
 
       <div class="map-workspace">
-        <div class="map-canvas-card">
-          <div class="map-badge" id="map-era-badge">Сучасний рельєф Поділля</div>
-          <svg class="reef-svg-map" id="reef-svg" viewBox="0 0 800 520" preserveAspectRatio="xMidYMid meet" aria-label="Інтерактивна схема Подільських Товтр">
-            <defs>
-              <linearGradient id="seaGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#192a24" stop-opacity="0.85"/>
-                <stop offset="100%" stop-color="#14211d" stop-opacity="0.95"/>
-              </linearGradient>
-              <linearGradient id="ridgeGrad" x1="0" y1="0" x2="0.8" y2="1">
-                <stop offset="0%" stop-color="#dfc293"/>
-                <stop offset="50%" stop-color="#b8935c"/>
-                <stop offset="100%" stop-color="#8a6738"/>
-              </linearGradient>
-              <filter id="glow">
-                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                <feMerge>
-                  <feMergeNode in="coloredBlur"/>
-                  <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-              </filter>
-            </defs>
+        <div class="map-relief-wrapper">
+          <div class="map-image-box">
+            <img src="assets/map/tovtry-relief-map.jpg" alt="Рельєфна 3D карта Подільських Товтр із 5 ключовими точками" width="1024" height="571" class="map-relief-img">
+            <div class="map-spots-overlay" role="group" aria-label="Інтерактивні локації на мапі">
+              <!-- 01 Сатанів -->
+              <button type="button" class="map-hotspot" data-spot="0" style="left: 19.0%; top: 38.5%;" aria-label="Сатанів: Північні ворота Товтр" aria-controls="map-detail-card" aria-pressed="false">
+                <span class="spot-pulse" aria-hidden="true"></span>
+                <span class="spot-ring" aria-hidden="true"></span>
+              </button>
+              <!-- 02 Товтра Сокіл -->
+              <button type="button" class="map-hotspot" data-spot="1" style="left: 35.5%; top: 39.2%;" aria-label="Товтра Сокіл: Скелястий конус" aria-controls="map-detail-card" aria-pressed="false">
+                <span class="spot-pulse" aria-hidden="true"></span>
+                <span class="spot-ring" aria-hidden="true"></span>
+              </button>
+              <!-- 03 Кам'янець-Подільський -->
+              <button type="button" class="map-hotspot active" data-spot="2" style="left: 50.2%; top: 49.0%;" aria-label="Кам'янець-Подільський: Смотрицький каньйон" aria-controls="map-detail-card" aria-pressed="true">
+                <span class="spot-pulse" aria-hidden="true"></span>
+                <span class="spot-ring" aria-hidden="true"></span>
+              </button>
+              <!-- 04 Бакота -->
+              <button type="button" class="map-hotspot" data-spot="3" style="left: 73.5%; top: 66.9%;" aria-label="Бакота: Затока та Біла скеля" aria-controls="map-detail-card" aria-pressed="false">
+                <span class="spot-pulse" aria-hidden="true"></span>
+                <span class="spot-ring" aria-hidden="true"></span>
+              </button>
+              <!-- 05 Печера Атлантида -->
+              <button type="button" class="map-hotspot" data-spot="4" style="left: 89.5%; top: 54.8%;" aria-label="Печера Атлантида: Триярусний лабіринт" aria-controls="map-detail-card" aria-pressed="false">
+                <span class="spot-pulse" aria-hidden="true"></span>
+                <span class="spot-ring" aria-hidden="true"></span>
+              </button>
+            </div>
+          </div>
 
-            <!-- Prehistoric Sea Overlay (active in sea mode) -->
-            <path class="ancient-sea-layer" id="ancient-sea-layer" d="M 0,0 L 800,0 L 800,260 Q 640,240 500,290 T 260,390 Q 140,430 0,460 Z" fill="url(#seaGrad)" opacity="0"/>
-
-            <!-- Topo Grid & Contour Curves -->
-            <g class="map-contours" stroke="currentColor" fill="none" opacity="0.14">
-              <path d="M 60,60 Q 300,100 740,70"/>
-              <path d="M 40,160 Q 380,180 760,150"/>
-              <path d="M 50,270 Q 420,290 750,260"/>
-              <path d="M 40,390 Q 430,370 760,400"/>
-              <line x1="120" y1="30" x2="120" y2="490" stroke-dasharray="3,6"/>
-              <line x1="320" y1="30" x2="320" y2="490" stroke-dasharray="3,6"/>
-              <line x1="520" y1="30" x2="520" y2="490" stroke-dasharray="3,6"/>
-              <line x1="720" y1="30" x2="720" y2="490" stroke-dasharray="3,6"/>
-            </g>
-
-            <!-- River Dniester and tributaries -->
-            <g class="river-system" fill="none" stroke="#607d75" stroke-linecap="round">
-              <!-- Smotrych River -->
-              <path class="river smotrych" d="M 380,50 Q 375,150 400,230 T 435,340 T 470,430" stroke-width="2.2" opacity="0.6"/>
-              <!-- Dniester River Canyon (lower boundary) -->
-              <path class="river dniester" d="M 80,480 Q 220,440 360,455 T 510,435 T 670,460 T 780,440" stroke-width="4" opacity="0.8"/>
-            </g>
-            <text x="700" y="430" class="river-label" fill="#88a89f">р. Дністер</text>
-            <text x="445" y="270" class="river-label" fill="#88a89f">р. Смотрич</text>
-
-            <!-- Main Barrier Reef Ridge Line (Arc) -->
-            <path class="reef-ridge-back" d="M 110,80 Q 260,130 380,210 T 540,320 T 710,410" fill="none" stroke="#d4af72" stroke-width="12" opacity="0.25" stroke-linecap="round"/>
-            <path class="reef-ridge-core" id="reef-ridge-core" d="M 110,80 Q 260,130 380,210 T 540,320 T 710,410" fill="none" stroke="url(#ridgeGrad)" stroke-width="4.5" stroke-linecap="round"/>
-
-            <text x="125" y="70" class="map-ridge-label" fill="#d4af72">БАР'ЄРНИЙ РИФ ТОВТР (200 км)</text>
-
-            <!-- Real Geological Landmarks Pins -->
-            <g class="map-pins" id="map-pins">
-              <!-- 0: Nihyn -->
-              <g class="map-pin" data-pin="0" tabindex="0" role="button" aria-label="Нігинські товтри">
-                <circle cx="360" cy="190" r="16" class="pin-pulse"/>
-                <circle cx="360" cy="190" r="7" class="pin-core"/>
-                <text x="375" y="195" class="pin-title">Нігинські товтри</text>
-              </g>
-
-              <!-- 1: Smotrych Canyon / Kamianets -->
-              <g class="map-pin active" data-pin="1" tabindex="0" role="button" aria-label="Смотрицький каньйон">
-                <circle cx="435" cy="285" r="18" class="pin-pulse"/>
-                <circle cx="435" cy="285" r="8" class="pin-core"/>
-                <text x="452" y="290" class="pin-title">Смотрицький каньйон</text>
-              </g>
-
-              <!-- 2: Verbka (Four Knights) -->
-              <g class="map-pin" data-pin="2" tabindex="0" role="button" aria-label="Вербецькі товтри">
-                <circle cx="475" cy="310" r="16" class="pin-pulse"/>
-                <circle cx="475" cy="310" r="7" class="pin-core"/>
-                <text x="492" y="315" class="pin-title">Вербецькі товтри</text>
-              </g>
-
-              <!-- 3: Kitayhorod Outcrop -->
-              <g class="map-pin" data-pin="3" tabindex="0" role="button" aria-label="Китайгородське відслонення">
-                <circle cx="560" cy="355" r="16" class="pin-pulse"/>
-                <circle cx="560" cy="355" r="7" class="pin-core"/>
-                <text x="578" y="360" class="pin-title">Китайгородське відслонення</text>
-              </g>
-
-              <!-- 4: Bakota Bay -->
-              <g class="map-pin" data-pin="4" tabindex="0" role="button" aria-label="Бакота & Дністровський каньйон">
-                <circle cx="645" cy="425" r="18" class="pin-pulse"/>
-                <circle cx="645" cy="425" r="8" class="pin-core"/>
-                <text x="540" y="445" class="pin-title">Бакота & Затока</text>
-              </g>
-            </g>
-
-            <!-- Scale bar -->
-            <g class="map-scale" transform="translate(45, 470)">
-              <line x1="0" y1="0" x2="80" y2="0" stroke="currentColor" stroke-width="2"/>
-              <line x1="0" y1="-4" x2="0" y2="4" stroke="currentColor" stroke-width="2"/>
-              <line x1="80" y1="-4" x2="80" y2="4" stroke="currentColor" stroke-width="2"/>
-              <text x="25" y="-8" class="scale-text" fill="currentColor">25 км</text>
-            </g>
-          </svg>
-          <div class="map-hint">Натисніть на позначку, щоб роздивитися точку дослідження</div>
+          <div class="map-pills-bar" role="tablist" aria-label="Швидкий вибір точки">
+            <button type="button" role="tab" class="map-pill" data-spot-tab="0" aria-selected="false"><span>01</span> Сатанів</button>
+            <button type="button" role="tab" class="map-pill" data-spot-tab="1" aria-selected="false"><span>02</span> Товтра Сокіл</button>
+            <button type="button" role="tab" class="map-pill active" data-spot-tab="2" aria-selected="true"><span>03</span> Кам'янець</button>
+            <button type="button" role="tab" class="map-pill" data-spot-tab="3" aria-selected="false"><span>04</span> Бакота</button>
+            <button type="button" role="tab" class="map-pill" data-spot-tab="4" aria-selected="false"><span>05</span> Печера Атлантида</button>
+          </div>
         </div>
 
         <aside class="map-card" id="map-detail-card" aria-live="polite">
           <div class="map-card-head">
-            <span class="map-card-index" id="map-detail-num">02</span>
+            <span class="map-card-index" id="map-detail-num">03</span>
             <div class="map-card-tags">
-              <span class="map-tag" id="map-detail-tag">Каньйон & Скелі</span>
+              <span class="map-tag" id="map-detail-tag">Каньйон & Морське дно</span>
               <span class="map-coord" id="map-detail-coords">48.673° N, 26.568° E</span>
             </div>
           </div>
-          <h3 class="map-card-title" id="map-detail-title">Смотрицький каньйон</h3>
-          <p class="map-card-desc" id="map-detail-desc">Природний розріз давнього морського дна. Сорокаметрові прямовисні вапнякові стінки в центрі Кам'янця-Подільського відкривають зріз силурійських та міоценових відкладів.</p>
+          <h3 class="map-card-title" id="map-detail-title">Кам'янець-Подільський</h3>
+          <p class="map-card-subtitle" id="map-detail-subtitle">Смотрицький каньйон & Місто на скелі</p>
+          <p class="map-card-desc" id="map-detail-desc">Серце Подільських Товтр. Річка Смотрич прорізала товщу давнього морського дна, утворивши каньйон завглибшки до 40 метрів. Середньовічна фортеця буквально виростає з вапнякових скель, фундаментом яких є давній коралово-мохуватковий риф.</p>
           <dl class="map-card-specs">
             <div>
               <dt>Висота над рівнем моря</dt>
-              <dd id="map-detail-alt">~210 м</dd>
+              <dd id="map-detail-alt">~210 м над р. м.</dd>
             </div>
             <div>
-              <dt>Геологічний вік</dt>
-              <dd id="map-detail-age">14–420 млн років</dd>
+              <dt>Геологічний вік порід</dt>
+              <dd id="map-detail-age">14–420 млн років (Силур–Міоцен)</dd>
             </div>
             <div>
               <dt>Що шукати досліднику</dt>
-              <dd id="map-detail-feature">Вертикальні тріщини, мохуваткові масиви, відшарування вапняку</dd>
+              <dd id="map-detail-feature">Вертикальні прямовисні стіни з горизонтальними нашаруваннями порід, міст «Стрімка лань», Замковий міст на природному перешийку</dd>
             </div>
           </dl>
           <div class="map-card-actions">
             <a class="map-route-btn" id="map-detail-link" href="https://maps.google.com/?q=48.673,26.568" target="_blank" rel="noopener noreferrer">
-              <span>Прокласти маршрут</span>
+              <span>Прокласти маршрут (Google Maps)</span>
               <span aria-hidden="true">↗</span>
             </a>
           </div>

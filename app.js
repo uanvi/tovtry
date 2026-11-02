@@ -389,71 +389,78 @@ for (const button of landmarkButtons) {
 }
 
 // ==========================================================================
-// Interactive Reef Map Component
+// Interactive Reef Map Component (3D Relief Map)
 // ==========================================================================
 
-const mapPinsData = [
+const mapSpotsData = [
   {
-    num: '01',
-    title: "Нігинські товтри",
-    tag: "Скелясті пасма & Печери",
-    coords: "48.783° N, 26.545° E",
-    alt: "~290 м",
-    age: "14–16 млн років",
-    desc: "Стрімкі поодинокі вапнякові скелі біля сіл Нігин та Сахкамінь. Тут розташовані відомі Нігинські печери у товтрових масивах, де можна вивчати пористість вапняку та сліди карсту.",
-    feature: "Пористість біогермного вапняку, форми карстових порожнин, обривисті схили",
-    link: "https://maps.google.com/?q=48.783,26.545"
+    num: "01",
+    name: "Сатанів",
+    subtitle: "Північні ворота Товтр · Збручанське пасмо",
+    tag: "Мінеральні джерела & Рифові вали",
+    coords: "49.251° N, 26.248° E",
+    alt: "~320 м над р. м.",
+    age: "14–16 млн років (Міоцен)",
+    desc: "Початок 200-кілометрового рифового пасма на кордоні Хмельниччини та Тернопільщини. Вапнякові хребти вкриті буковими пралісами над річкою Збруч. У надрах залягають знамениті мінеральні води типу «Нафтуся».",
+    feature: "Залишки давніх рифових гребенів, Сатанівський замок на вапняковій кручі, печерний монастир у товтрах",
+    link: "https://maps.google.com/?q=49.251,26.248"
   },
   {
-    num: '02',
-    title: "Смотрицький каньйон",
-    tag: "Каньйон & Скелі",
+    num: "02",
+    name: "Товтра Сокіл",
+    subtitle: "Скелястий вапняковий конус біля Нігина",
+    tag: "Біогермний риф & Степові трави",
+    coords: "48.835° N, 26.634° E",
+    alt: "~345 м над р. м.",
+    age: "14–15 млн років",
+    desc: "Одна з найвищих і найстрімкіших товтр Поділля. Це окремий підводний біогермний рифовий масив, складений мільярдами мікроскопічних водоростей і мохуваток, що різко здіймається над довколишніми рівнинними полями на понад 80 метрів.",
+    feature: "Круті обривисті схили, відкриті кам'янисті відслонення, реліктова степова рослинність міоценового віку",
+    link: "https://maps.google.com/?q=48.835,26.634"
+  },
+  {
+    num: "03",
+    name: "Кам'янець-Подільський",
+    subtitle: "Смотрицький каньйон & Місто на скелі",
+    tag: "Каньйон & Морське дно",
     coords: "48.673° N, 26.568° E",
-    alt: "~210 м",
-    age: "14–420 млн років",
-    desc: "Природний розріз давнього морського дна. Сорокаметрові прямовисні вапнякові стінки в центрі Кам'янця-Подільського відкривають зріз силурійських та міоценових відкладів.",
-    feature: "Вертикальні тріщини, мохуваткові масиви, шаруватість порід над річкою",
+    alt: "~210 м над р. м.",
+    age: "14–420 млн років (Силур–Міоцен)",
+    desc: "Серце Подільських Товтр. Річка Смотрич прорізала товщу давнього морського дна, утворивши каньйон завглибшки до 40 метрів. Середньовічна фортеця буквально виростає з вапнякових скель, фундаментом яких є давній коралово-мохуватковий риф.",
+    feature: "Вертикальні прямовисні стіни з горизонтальними нашаруваннями порід, міст «Стрімка лань», Замковий міст на природному перешийку",
     link: "https://maps.google.com/?q=48.673,26.568"
   },
   {
-    num: '03',
-    title: "Вербецькі товтри (Чотири Кавалери)",
-    tag: "Ізольовані рифи",
-    coords: "48.665° N, 26.685° E",
-    alt: "~315 м",
-    age: "14–15 млн років",
-    desc: "Група виразних конусоподібних пагорбів, що піднімаються над навколишньою рівниною на 60 метрів. Наочний приклад окремих підводних рифових банок, що не зазнали змиву водою.",
-    feature: "Характерний конічний силует рифу, трав'яні схили, відкриті кам'янисті вершини",
-    link: "https://maps.google.com/?q=48.665,26.685"
-  },
-  {
-    num: '04',
-    title: "Китайгородське відслонення",
-    tag: "Геологічний еталон ЮНЕСКО",
-    coords: "48.647° N, 26.792° E",
-    alt: "~240 м",
-    age: "14–430 млн років",
-    desc: "Один із найвизначніших геологічних розрізів Європи біля річки Тернава. Тут на площі 60 гектарів повністю відкривається перехід від найдавніших силурійських шарів до міоценових вапняків.",
-    feature: "Еталонний геологічний розріз, багаті відклади брахіопод, коралів та мохуваток",
-    link: "https://maps.google.com/?q=48.647,26.792"
-  },
-  {
-    num: '05',
-    title: "Бакота & Дністровський каньйон",
-    tag: "Затоплений каньйон",
+    num: "04",
+    name: "Бакота",
+    subtitle: "Дністровський каньйон & Біла скеля",
+    tag: "Затоплена долина & Печери",
     coords: "48.583° N, 26.996° E",
-    alt: "~150 м",
+    alt: "~150 м над р. м.",
     age: "14–15 млн років",
-    desc: "Велична Біла скеля та затока на місці стародавньої річкової долини. Білі стіни відслонень височіють над водою, показуючи масштаб колишньої підводної бар'єрної системи перед відступом моря.",
-    feature: "Потужні відслонення білих вапняків, мікроклімат Дністровського водосховища",
+    desc: "Південний край Товтр над величним Дністровським водосховищем. Білосніжні 120-метрові вапнякові кручі обриваються прямо в бірюзову воду затоки. Завдяки скелястому амфітеатру тут утворився теплий, майже субтропічний мікроклімат.",
+    feature: "Найдавніший скельний монастир у товтрових породах (XI ст.), оглядовий майданчик Білої скелі, джерела кришталевої води",
     link: "https://maps.google.com/?q=48.583,26.996"
+  },
+  {
+    num: "05",
+    name: "Печера «Атлантида»",
+    subtitle: "с. Завалля над річкою Збруч",
+    tag: "Триярусний підземний лабіринт",
+    coords: "48.599° N, 26.342° E",
+    alt: "~195 м над р. м.",
+    age: "Міоценові гіпси та вапняки",
+    desc: "Єдина в Поділлі триярусна карстова печера загальною довжиною понад 2,5 км. Утворилася у вимитих водою товтрових осадових пластах. Відома унікальними залами, вкритими кристалами гіпсу найрізноманітніших форм («квіти Атлантиди»).",
+    feature: "Триярусна будова галерей, кристалічні зали «Динамо», «Червоні маки», спелеологічні експедиційні маршрути",
+    link: "https://maps.google.com/?q=48.599,26.342"
   }
 ];
 
 function initReefMap() {
-  const pins = document.querySelectorAll('.map-pin');
+  const hotspots = document.querySelectorAll('.map-hotspot');
+  const pills = document.querySelectorAll('.map-pill');
   const numEl = document.querySelector('#map-detail-num');
   const titleEl = document.querySelector('#map-detail-title');
+  const subtitleEl = document.querySelector('#map-detail-subtitle');
   const tagEl = document.querySelector('#map-detail-tag');
   const coordsEl = document.querySelector('#map-detail-coords');
   const altEl = document.querySelector('#map-detail-alt');
@@ -462,12 +469,25 @@ function initReefMap() {
   const featureEl = document.querySelector('#map-detail-feature');
   const linkEl = document.querySelector('#map-detail-link');
 
-  function selectPin(index) {
-    const data = mapPinsData[index];
+  function selectSpot(index) {
+    const data = mapSpotsData[index];
     if (!data) return;
-    pins.forEach((pin, i) => pin.classList.toggle('active', i === index));
+
+    hotspots.forEach((spot, i) => {
+      const isSelected = i === index;
+      spot.classList.toggle('active', isSelected);
+      spot.setAttribute('aria-pressed', String(isSelected));
+    });
+
+    pills.forEach((pill, i) => {
+      const isSelected = i === index;
+      pill.classList.toggle('active', isSelected);
+      pill.setAttribute('aria-selected', String(isSelected));
+    });
+
     if (numEl) numEl.textContent = data.num;
-    if (titleEl) titleEl.textContent = data.title;
+    if (titleEl) titleEl.textContent = data.name;
+    if (subtitleEl) subtitleEl.textContent = data.subtitle;
     if (tagEl) tagEl.textContent = data.tag;
     if (coordsEl) coordsEl.textContent = data.coords;
     if (altEl) altEl.textContent = data.alt;
@@ -477,43 +497,13 @@ function initReefMap() {
     if (linkEl) linkEl.href = data.link;
   }
 
-  pins.forEach((pin, index) => {
-    pin.addEventListener('click', () => selectPin(index));
-    pin.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        selectPin(index);
-      }
-    });
+  hotspots.forEach((spot, index) => {
+    spot.addEventListener('click', () => selectSpot(index));
   });
 
-  const modeToday = document.querySelector('#map-mode-today');
-  const modeSea = document.querySelector('#map-mode-sea');
-  const seaLayer = document.querySelector('#ancient-sea-layer');
-  const eraBadge = document.querySelector('#map-era-badge');
-  const reefCore = document.querySelector('#reef-ridge-core');
-
-  if (modeToday && modeSea) {
-    modeToday.addEventListener('click', () => {
-      modeToday.classList.add('active');
-      modeToday.setAttribute('aria-pressed', 'true');
-      modeSea.classList.remove('active');
-      modeSea.setAttribute('aria-pressed', 'false');
-      if (seaLayer) seaLayer.style.opacity = '0';
-      if (eraBadge) eraBadge.textContent = 'Сучасний рельєф Поділля';
-      if (reefCore) reefCore.removeAttribute('filter');
-    });
-
-    modeSea.addEventListener('click', () => {
-      modeSea.classList.add('active');
-      modeSea.setAttribute('aria-pressed', 'true');
-      modeToday.classList.remove('active');
-      modeToday.setAttribute('aria-pressed', 'false');
-      if (seaLayer) seaLayer.style.opacity = '1';
-      if (eraBadge) eraBadge.textContent = 'Міоценове море (14 млн років тому)';
-      if (reefCore) reefCore.setAttribute('filter', 'url(#glow)');
-    });
-  }
+  pills.forEach((pill, index) => {
+    pill.addEventListener('click', () => selectSpot(index));
+  });
 }
 
 initReefMap();
