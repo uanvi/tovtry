@@ -1089,15 +1089,17 @@ h1 em {
 
 .map-workspace {
   display: grid;
-  grid-template-columns: 1.4fr 1fr;
+  grid-template-columns: 1.35fr 1fr;
   gap: 32px;
-  align-items: start;
+  align-items: stretch;
 }
 
 .map-relief-wrapper {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   gap: 16px;
+  height: 100%;
 }
 
 .map-image-box {
@@ -1128,7 +1130,6 @@ h1 em {
 
 .map-hotspot {
   position: absolute;
-  width: 7.8%;
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
   border-radius: 50%;
@@ -1142,11 +1143,13 @@ h1 em {
 }
 
 .map-hotspot:hover {
-  transform: translate(-50%, -50%) scale(1.1);
+  transform: translate(-50%, -50%) scale(1.08);
+  z-index: 5;
 }
 
 .map-hotspot.active {
-  transform: translate(-50%, -50%) scale(1.08);
+  transform: translate(-50%, -50%) scale(1.06);
+  z-index: 6;
 }
 
 .spot-pulse {
@@ -1155,40 +1158,47 @@ h1 em {
   border-radius: 50%;
   border: 2px solid var(--gold);
   pointer-events: none;
-  opacity: 0.6;
-  animation: spotPulse 2.4s ease-out infinite;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .spot-ring {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border: 2.5px solid #fff;
-  box-shadow: 0 0 0 2px var(--gold), 0 4px 14px rgba(0, 0, 0, 0.4);
-  background: rgba(212, 175, 114, 0.15);
-  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 0 1.5px rgba(212, 175, 114, 0.8), 0 4px 12px rgba(0, 0, 0, 0.35);
+  background: transparent;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
 }
 
 .map-hotspot:hover .spot-ring {
   border-color: #fff;
-  box-shadow: 0 0 0 3px var(--gold-light), 0 0 20px rgba(212, 175, 114, 0.8);
-  background: rgba(212, 175, 114, 0.25);
+  border-width: 2.5px;
+  box-shadow: 0 0 0 2.5px var(--gold-light), 0 0 18px rgba(212, 175, 114, 0.85);
+  background: rgba(212, 175, 114, 0.15);
+}
+
+.map-hotspot:hover .spot-pulse {
+  opacity: 0.8;
+  animation: spotPulse 1.8s ease-out infinite;
 }
 
 .map-hotspot.active .spot-ring {
   border-color: #fff;
-  box-shadow: 0 0 0 3.5px var(--gold), 0 0 26px rgba(212, 175, 114, 0.95);
-  background: rgba(212, 175, 114, 0.35);
+  border-width: 2.5px;
+  box-shadow: 0 0 0 3px var(--gold), 0 0 26px rgba(212, 175, 114, 0.95);
+  background: rgba(212, 175, 114, 0.2);
 }
 
 .map-hotspot.active .spot-pulse {
-  animation: spotPulse 1.4s ease-out infinite;
-  opacity: 0.9;
+  opacity: 1;
+  animation: spotPulse 1.5s ease-out infinite;
 }
 
 @keyframes spotPulse {
-  0% { transform: scale(0.9); opacity: 0.8; }
-  100% { transform: scale(1.6); opacity: 0; }
+  0% { transform: scale(0.95); opacity: 0.8; }
+  100% { transform: scale(1.55); opacity: 0; }
 }
 
 .map-pills-bar {
@@ -1238,6 +1248,7 @@ h1 em {
   padding: 34px 30px;
   display: flex;
   flex-direction: column;
+  height: 100%;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
 }
 
