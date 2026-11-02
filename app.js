@@ -255,7 +255,8 @@ const chapterSections = chapterLinks.map(link => document.getElementById(link.da
 let dockFrame = 0;
 function updateDock() {
   dockFrame = 0;
-  dock.hidden = window.scrollY < window.innerHeight * .65 || document.querySelector('#about').getBoundingClientRect().top < window.innerHeight * .6;
+  const mobileJourneyVisible = matchMedia('(max-width: 700px), (max-width: 1000px) and (max-height: 500px)').matches && journey.getBoundingClientRect().bottom > window.innerHeight * .5;
+  dock.hidden = mobileJourneyVisible || window.scrollY < window.innerHeight * .65 || document.querySelector('#about').getBoundingClientRect().top < window.innerHeight * .6;
   let active = 0;
   chapterSections.forEach((section, index) => { if (section.getBoundingClientRect().top < window.innerHeight * .5) active = index; });
   chapterLinks.forEach((link, index) => {
