@@ -10,8 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="preload" as="image" href="assets/frames/mobile/frame_001.webp" media="(max-width: 700px)">
-  <link rel="preload" as="image" href="assets/frames/desktop/frame_001.webp" media="(min-width: 701px)">
+  <link rel="preload" as="image" type="image/avif" href="assets/frames/hero/frame_001.avif">
   <link rel="stylesheet" href="styles.css">
   <script type="module" src="app.js"></script>
 </head>
@@ -48,7 +47,7 @@
     <section class="journey" id="top" aria-label="Подорож від сучасних Товтр до давнього моря">
       <div class="stage">
         <div class="visual" id="visual">
-          <picture><source media="(max-width: 700px)" srcset="assets/frames/mobile/frame_001.webp"><img class="poster" src="assets/frames/desktop/frame_001.webp" alt="Художня візуалізація: вапнякові скелі серед зелених пагорбів у золотому світанковому світлі." width="1280" height="720" fetchpriority="high"></picture>
+          <picture><source type="image/avif" srcset="assets/frames/hero/frame_001.avif"><source media="(max-width: 700px)" srcset="assets/frames/mobile/frame_001.webp"><img class="poster" src="assets/frames/desktop/frame_001.webp" alt="Художня візуалізація: вапнякові скелі серед зелених пагорбів у золотому світанковому світлі." width="1280" height="720" fetchpriority="high"></picture>
           <canvas id="landscape" aria-hidden="true"></canvas>
         </div>
         <div class="scene-shade"></div>
@@ -396,12 +395,8 @@
               <span>Відкрити картку дослідника</span>
               <span aria-hidden="true">↗</span>
             </button>
-            <a class="button-link button-ghost field-download" href="assets/field-notes.html" download="Hlybshe-Podilski-Tovtry.html">
-              <span>Зберегти офлайн HTML</span>
-              <span aria-hidden="true">↓</span>
-            </a>
           </div>
-          <span class="visit-footnote">Безкоштовно · відкривається без інтернету · версія для друку та PDF</span>
+          <span class="visit-footnote">Безкоштовно · версія для друку та PDF</span>
           <div class="expedition-extra-links">
             <a class="expedition-plan" href="https://www.npptovtry.org.ua/" target="_blank" rel="noopener noreferrer">НПП «Подільські Товтри» <span aria-hidden="true">↗</span></a>
             <a class="expedition-plan" href="#map">Переглянути мапу <span aria-hidden="true">↑</span></a>

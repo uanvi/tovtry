@@ -7,9 +7,10 @@
     "dev": "node scripts/serve.mjs",
     "start": "node scripts/serve.mjs",
     "prepare-media": "node scripts/prepare-media.mjs",
+    "prepare-hero": "node scripts/prepare-hero-avif.mjs",
     "prepare-notes": "node scripts/prepare-field-notes.mjs",
     "prepare-editorial": "node scripts/prepare-editorial-media.mjs",
-    "check": "node --check app.js && node --check scripts/serve.mjs && node --check scripts/prepare-media.mjs && node --check scripts/prepare-field-notes.mjs && node --check scripts/prepare-editorial-media.mjs"
+    "check": "node --check app.js && node --check scripts/serve.mjs && node --check scripts/prepare-media.mjs && node --check scripts/prepare-field-notes.mjs && node --check scripts/prepare-editorial-media.mjs && node --check scripts/prepare-hero-avif.mjs && node --check assets/frames/hero/sequence.js"
   },
   "devDependencies": {
     "sharp": "^0.35.5"

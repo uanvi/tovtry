@@ -1,3 +1,5 @@
+import { heroFrames } from './assets/frames/hero/sequence.js';
+
 // ==========================================================================
 // ГЛИБШЕ · Преміальний рушій взаємодії та аудіо-атмосфери
 // ==========================================================================
@@ -16,8 +18,7 @@ const loadingStatus = document.querySelector('#loading-status');
 const motionToggle = document.querySelector('#motion-toggle');
 const soundToggle = document.querySelector('#sound-toggle');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-const variant = matchMedia('(max-width: 700px)').matches ? 'mobile' : 'desktop';
-const count = 50;
+const count = heroFrames.length;
 const blobs = new Map();
 const decoded = new Map();
 const decoding = new Map();
@@ -47,7 +48,7 @@ const smooth = (start, end, value) => {
   const t = clamp((value - start) / (end - start));
   return t * t * (3 - 2 * t);
 };
-const frameURL = index => `assets/frames/${variant}/frame_${String(index + 1).padStart(3, '0')}.webp`;
+const frameURL = index => `assets/frames/hero/${heroFrames[index]}`;
 const captions = [
   ['Крізь геологічний час', 'Змінюється світ.<br>Камінь пам’ятає.', 'Знайомий краєвид поступається місцем морському середовищу.'],
   ['Міоцен / Давнє море', 'Тут виростало<br>майбутнє Поділля.', 'Водорості, молюски та інші організми створювали вапнякові рифи.'],
