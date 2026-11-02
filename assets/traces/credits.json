@@ -1,0 +1,56 @@
+[
+  {
+    "id": "fossils",
+    "sourceFile": "img/documentary/fossils.png",
+    "providedBy": "user",
+    "author": null,
+    "license": null,
+    "locationVerified": false,
+    "classification": "illustrative material",
+    "metadataMarkers": [
+      "OpenAI",
+      "ChatGPT",
+      "c2pa"
+    ],
+    "revision": "89ac053b4b",
+    "width": 1449,
+    "height": 1086,
+    "changes": "Resized and encoded as WebP from the replacement source; no additional color edits."
+  },
+  {
+    "id": "limestone",
+    "sourceFile": "img/documentary/limestone.jpg",
+    "providedBy": "user",
+    "author": null,
+    "license": null,
+    "locationVerified": false,
+    "classification": "illustrative material",
+    "metadataMarkers": [
+      "OpenAI",
+      "ChatGPT",
+      "c2pa"
+    ],
+    "revision": "89ac053b4b",
+    "width": 1536,
+    "height": 1024,
+    "changes": "Resized and encoded as WebP from the replacement source; no additional color edits."
+  },
+  {
+    "id": "tovtry",
+    "sourceFile": "img/documentary/tovtry.png",
+    "providedBy": "user",
+    "author": null,
+    "license": null,
+    "locationVerified": false,
+    "classification": "illustrative material",
+    "metadataMarkers": [
+      "OpenAI",
+      "ChatGPT",
+      "c2pa"
+    ],
+    "revision": "89ac053b4b",
+    "width": 1600,
+    "height": 726,
+    "changes": "Resized and encoded as WebP from the replacement source; no additional color edits."
+  }
+]

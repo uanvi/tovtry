@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#242522">
+  <meta name="description" content="Море, якого немає. Інтерактивна подорож у геологічне минуле Подільських Товтр — від сучасного пейзажу до давнього моря.">
+  <title>Море, якого немає — ГЛИБШЕ</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" as="image" href="assets/frames/mobile/frame_001.webp" media="(max-width: 700px)">
+  <link rel="preload" as="image" href="assets/frames/desktop/frame_001.webp" media="(min-width: 701px)">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#origin">До змісту історії</a>
+  <header class="header" id="header">
+    <a class="brand" href="#top" aria-label="Глибше — на початок">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 8h26M6 14h20M9 20h14M13 26h6"/></svg>
+      <span>ГЛИБШЕ<span class="brand-dot">.</span></span>
+    </a>
+    <nav aria-label="Головна навігація"><a href="#origin">Історія</a><a href="#visit">Побачити наживо <span aria-hidden="true">↗</span></a><a href="#about">Про проєкт</a></nav>
+    <button class="motion-toggle" id="motion-toggle" type="button" aria-pressed="false"><span class="motion-icon" aria-hidden="true">Ⅱ</span><span class="motion-label">Зупинити рух</span></button>
+  </header>
+
+  <main>
+    <section class="journey" id="top" aria-label="Подорож від сучасних Товтр до давнього моря">
+      <div class="stage">
+        <div class="visual" id="visual">
+          <picture><source media="(max-width: 700px)" srcset="assets/frames/mobile/frame_001.webp"><img class="poster" src="assets/frames/desktop/frame_001.webp" alt="Художня візуалізація: вапнякові скелі серед зелених пагорбів у золотому світанковому світлі." width="1280" height="720" fetchpriority="high"></picture>
+          <canvas id="landscape" aria-hidden="true"></canvas>
+        </div>
+        <div class="scene-shade"></div>
+        <div class="hero-copy" id="hero-copy">
+          <p class="eyebrow"><span class="small-line"></span> Невідома Україна / Історія 01</p>
+          <h1>Море,  <br>якого <em>немає.</em></h1>
+          <p class="hero-description">Подільські Товтри. Пейзаж, що пам’ятає море.  <br>Прокрутіть сторінку — і побачте його минуле.</p>
+          <a class="journey-start" href="#immersion">Поринути в історію <span aria-hidden="true">↓</span></a>
+        </div>
+        <div class="scene-copy" id="scene-copy" aria-hidden="true"><p class="eyebrow" id="scene-label">Подорож у минуле</p><h2 id="scene-title">Змінюється світ.  <br>Камінь пам’ятає.</h2><p id="scene-description">Знайомі схили стають частиною іншої епохи.</p></div>
+        <div class="scene-side" aria-hidden="true"><span>ПОДІЛЛЯ, УКРАЇНА</span><span>Один краєвид. Різні епохи.</span></div>
+        <div class="hero-bottom">
+          <div class="scroll-cue"><span class="scroll-circle" aria-hidden="true">↓</span><span>Гортайте, щоб  <br>подорожувати в часі</span></div>
+          <div class="era-control" aria-hidden="true"><div class="era-labels"><span id="era">Сьогодні</span><span>Міоцен</span></div><div class="era-track"><span id="era-progress"></span></div></div>
+          <span class="reconstruction">Художня реконструкція</span>
+        </div>
+        <p class="loading-status" id="loading-status" role="status">Готуємо подорож…</p>
+        <span class="immersion-anchor" id="immersion" aria-hidden="true"></span>
+      </div>
+    </section>
+
+    <section class="static-scenes container" aria-label="Той самий краєвид у різні епохи">
+      <figure><img src="assets/frames/mobile/frame_001.webp" alt="Сучасний пейзаж із вапняковими скелями, художня візуалізація." width="800" height="450"><figcaption>01 / Сьогодні</figcaption></figure>
+      <figure><img src="assets/frames/mobile/frame_050.webp" alt="Ті самі скелі у давньому морі, художня реконструкція." width="800" height="450"><figcaption>02 / Давнє море</figcaption></figure>
+    </section>
+    <noscript><p class="no-script container">Покадрова подорож потребує JavaScript. Історію можна прочитати нижче; два краєвиди доступні в розділі «Два світи».</p></noscript>
+
+    <section class="origin section-pad container" id="origin">
+      <div class="section-heading"><p class="eyebrow">01 / Прочитати пейзаж</p><span class="section-note">Історія, записана в камені</span></div>
+      <div class="origin-layout">
+        <h2>Ви стоїте  <br>на дні <em>давнього   <br>моря.</em></h2>
+        <div class="origin-text"><p class="lead">Перед вами — пагорби, трави й білі скелі. Але колись тут було неглибоке тепле море.</p><p>Подільські Товтри — залишки рифових споруд міоцену. Їх будували вапнякові водорості, мохуватки, молюски та інші морські організми. Їхні рештки ставали частиною каменю.</p><p>Морські умови змінювалися. Згодом давні рифи опинилися на суходолі, а вивітрювання та ерозія відкрили їхні обриси. Сьогодні ми бачимо цей довгий процес як звичайний краєвид.</p><a class="text-link" href="#traces">Навчитися помічати <span aria-hidden="true">↘</span></a></div>
+      </div>
+      <div class="time-strip"><span>Не мить. Мільйони років.</span><div aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span>Міоцен → Сьогодні</span></div>
+    </section>
+
+    <section class="traces section-pad" id="traces">
+      <div class="container">
+        <div class="section-heading"><p class="eyebrow">02 / Сліди залишилися</p><span class="section-note">Атлас спостережень / 3 масштаби</span></div>
+        <div class="traces-heading"><h2>Камінь — це  <br><em>пам’ять моря.</em></h2><p>Від мушлі — до пасма пагорбів. <br>Оберіть масштаб і придивіться <br>до справжніх слідів минулого.</p></div>
+        <div class="trace-tabs" role="tablist" aria-label="Ілюстративні матеріали про давнє море">
+          <button type="button" role="tab" id="trace-tab-0" aria-selected="true" aria-controls="trace-panel" tabindex="0" data-trace="0"><span>01</span><strong>Життя в камені</strong><span class="trace-tab-scale">Макро</span></button>
+          <button type="button" role="tab" id="trace-tab-1" aria-selected="false" aria-controls="trace-panel" tabindex="-1" data-trace="1"><span>02</span><strong>Відкрита порода</strong><span class="trace-tab-scale">Скеля</span></button>
+          <button type="button" role="tab" id="trace-tab-2" aria-selected="false" aria-controls="trace-panel" tabindex="-1" data-trace="2"><span>03</span><strong>Форма ландшафту</strong><span class="trace-tab-scale">Панорама</span></button>
+        </div>
+        <div class="trace-panel" id="trace-panel" role="tabpanel" tabindex="0" aria-labelledby="trace-tab-0">
+          <figure class="trace-figure">
+            <div class="trace-photo-wrap"><img id="trace-photo" src="assets/traces/fossils-1600.webp?v=89ac053b4b" srcset="assets/traces/fossils-800.webp?v=89ac053b4b 800w, assets/traces/fossils-1600.webp?v=89ac053b4b 1449w" sizes="(max-width: 900px) 100vw, 60vw" width="1449" height="1086" alt="Світла порода з численними спіральними мушлями та стулками молюсків, ілюстративне зображення." loading="lazy"><span class="trace-photo-badge">Ілюстративний матеріал</span><button type="button" class="trace-zoom" id="trace-zoom" aria-label="Роздивитися зображення на весь екран"><span aria-hidden="true">↗</span> Роздивитися</button><span id="trace-loading" class="trace-loading" role="status"></span></div>
+            <figcaption><span id="trace-location">Морські мушлі у вапняку · ілюстративний матеріал</span><span><span id="trace-source">Джерело: <span id="trace-author">матеріали проєкту</span></span><span id="trace-license" hidden></span></span></figcaption>
+          </figure>
+          <div class="trace-story"><span class="trace-story-index" id="trace-index" aria-hidden="true">01</span><p class="eyebrow" id="trace-kicker">Морське життя → гірська порода</p><h3 id="trace-title">Мушля стає <br>частиною каменю.</h3><p id="trace-description">Рештки морських організмів можуть зберігатися в осадовій породі. Це зображення допомагає придивитися до форм мушель і уявити, як сліди життя стають частиною вапняку.</p><div class="trace-observe"><span>На що подивитися</span><p id="trace-observation">Знайдіть спіральні мушлі та широкі ребристі стулки. Порівняйте їхні форми; масштабну лінійку на цьому зображенні не наведено.</p></div><p class="trace-provenance" id="trace-provenance">Ілюстративний матеріал, наданий для проєкту. Точну географічну прив’язку й масштаб зображення не вказано.</p><span class="trace-counter" id="trace-counter">01 / 03</span></div>
+        </div>
+        <div class="trace-bottom"><p>Ілюстративні зображення надані для проєкту. Геологічні пояснення спираються на джерела, наведені нижче.</p><a href="#worlds">А тепер змініть епоху <span aria-hidden="true">↘</span></a></div>
+      </div>
+    </section>
+    <dialog class="trace-dialog" id="trace-dialog" aria-label="Зображення у великому розмірі"><button type="button" id="trace-dialog-close" class="trace-dialog-close" aria-label="Закрити збільшене фото">Закрити <span aria-hidden="true">×</span></button><figure><img id="trace-dialog-image" alt=""><figcaption id="trace-dialog-caption"></figcaption></figure></dialog>
+
+
+    <section class="comparison-section section-pad container" id="worlds">
+      <div class="section-heading"><p class="eyebrow">03 / Ваша маленька експедиція</p><span class="section-note">Змінюйте епоху. Досліджуйте деталі.</span></div>
+      <div class="discovery-heading"><h2>У пейзажу є  <br><em>що розповісти.</em></h2><p>Посуньте межу між епохами.  <br>Торкніться позначок, щоб прочитати  <br>три підказки до цього краєвиду.</p></div>
+      <div class="discovery-workspace">
+      <div class="comparison" id="comparison">
+        <img src="assets/frames/desktop/frame_050.webp" srcset="assets/frames/mobile/frame_050.webp 800w, assets/frames/desktop/frame_050.webp 1280w" sizes="(max-width: 700px) 100vw, 90vw" alt="Підводна художня реконструкція того самого пейзажу." width="1280" height="720" loading="lazy">
+        <div class="comparison-before"><img src="assets/frames/desktop/frame_001.webp" srcset="assets/frames/mobile/frame_001.webp 800w, assets/frames/desktop/frame_001.webp 1280w" sizes="(max-width: 700px) 100vw, 90vw" alt="Сучасний пейзаж у тій самій композиції, художня візуалізація." width="1280" height="720" loading="lazy"></div>
+        <span class="comparison-label label-now">Сьогодні</span><span class="comparison-label label-then">Давнє море</span><span class="comparison-divider" aria-hidden="true"><span>↔</span></span>
+        <input id="comparison-range" type="range" min="0" max="100" value="50" aria-label="Межа між сучасним пейзажем і давнім морем" aria-valuetext="50% сучасного пейзажу">
+        <div class="landmark-controls" role="group" aria-label="Деталі пейзажу">
+          <button class="landmark landmark-reef" type="button" data-landmark="0" aria-label="Дослідити рельєф" aria-controls="landmark-panel" aria-pressed="true"><span>01</span><span class="landmark-label">Рельєф</span></button>
+          <button class="landmark landmark-stone" type="button" data-landmark="1" aria-label="Дослідити вапняк" aria-controls="landmark-panel" aria-pressed="false"><span>02</span><span class="landmark-label">Вапняк</span></button>
+          <button class="landmark landmark-life" type="button" data-landmark="2" aria-label="Дослідити сліди життя" aria-controls="landmark-panel" aria-pressed="false"><span>03</span><span class="landmark-label">Життя</span></button>
+        </div>
+      </div>
+      <div class="landmark-panel" id="landmark-panel" aria-live="polite" aria-atomic="true">
+        <div class="landmark-index"><span id="landmark-number">01</span><span>Підказка  <br>до пейзажу</span></div>
+        <div class="landmark-story"><p class="eyebrow" id="landmark-category">Прочитати рельєф</p><h3 id="landmark-title">Пагорби, які починалися під водою.</h3><p id="landmark-description">Товтри зберігають обриси давніх рифових споруд. На справжній місцевості придивіться, як скелясті пасма піднімаються над навколишнім ландшафтом.</p></div>
+        <a class="landmark-next" href="#visit">Взяти підказки  <br>із собою <span aria-hidden="true">↗</span></a>
+      </div>
+      </div>
+      <p class="image-note">Той самий ракурс, різні епохи. Обидва зображення — художні візуалізації, а не документальні фотографії чи точна наукова модель.</p>
+    </section>
+
+    <section class="visit expedition" id="visit">
+      <div class="visit-image"><img src="assets/visit/sunrise-1600.webp" srcset="assets/visit/sunrise-800.webp 800w, assets/visit/sunrise-1600.webp 1600w" sizes="100vw" width="1600" height="898" loading="lazy" alt="Художня візуалізація золотого світанку над широкою долиною річки та її вигином."></div>
+      <div class="expedition-top"><p class="eyebrow">04 / Повернутися в сьогодні</p><span>ПОДІЛЛЯ · УКРАЇНА</span></div>
+      <div class="expedition-content">
+        <div class="visit-copy"><span class="expedition-kicker">Від екрана — до відкриття</span><h2>Побачте це  <br><em>на власні очі.</em></h2><p>Тепер у цього краєвиду є історія.  <br>Візьміть із собою три підказки —  <br>і погляньте на Товтри по-новому.</p><a class="button-link field-download" href="assets/field-notes.html" download="Hlybshe-Podilski-Tovtry.html">Зберегти картку дослідника <span aria-hidden="true">↓</span></a><span class="visit-footnote">Безкоштовно · відкривається без інтернету · можна роздрукувати</span><a class="expedition-plan" href="https://www.npptovtry.org.ua/" target="_blank" rel="noopener noreferrer">Планувати відвідування <span aria-hidden="true">↗</span></a></div>
+        <aside class="field-preview" aria-label="Що містить картка дослідника"><div class="field-preview-top"><span class="eyebrow">Польові нотатки / 01</span><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 8h26M6 14h20M9 20h14M13 26h6"/></svg></div><p class="field-preview-intro">Не просто дивитися.  <br><em>Помічати.</em></p><ol><li><span>01</span><div><strong>Прочитайте рельєф</strong><p>Де скелясті пасма вирізняються серед пагорбів?</p></div></li><li><span>02</span><div><strong>Роздивіться камінь</strong><p>Яку фактуру має вапняк у природних відслоненнях?</p></div></li><li><span>03</span><div><strong>Знайдіть сліди життя</strong><p>Чи помітні черепашки або їхні відбитки?</p></div></li></ol><div class="field-preview-bottom"><span>ГЛИБШЕ.</span><span>Море, якого немає</span></div></aside>
+      </div>
+      <div class="expedition-bottom"><span>Пейзаж — художня візуалізація</span><p>Перед поїздкою уточніть доступність локації та правила парку. Спостерігайте, не пошкоджуючи породи й не збираючи скам’янілостей.</p></div>
+    </section>
+
+    <section class="about section-pad container" id="about">
+      <div><p class="eyebrow">Про «ГЛИБШЕ»</p><h2>Побачити Україну.  <br><em>Зрозуміти, як вона виникла.</em></h2></div>
+      <div class="about-columns"><p>«ГЛИБШЕ» — проєкт про маловідому Україну через історії її ландшафтів. Ми пропонуємо сповільнитися, придивитися й побачити за знайомими місцями мільйони років змін.</p><div><h3>Джерела та метод</h3><p>Геологічні пояснення спираються на матеріали НПП «Подільські Товтри». Перехід між епохами — художня інтерпретація, що допомагає пояснити ідею.</p><a href="https://www.npptovtry.org.ua/podilski-tovtry/pryrodni-pam-yatky/pro-tovtry/" target="_blank" rel="noopener noreferrer">Про походження Товтр <span aria-hidden="true">↗</span></a><a href="https://www.npptovtry.org.ua/geologichna-budova-terytoriyi-natsionalnogo-pryrodnogo-parku-podilski-tovtry/" target="_blank" rel="noopener noreferrer">Геологічна будова території <span aria-hidden="true">↗</span></a></div></div>
+    </section>
+  </main>
+  <nav class="chapter-dock" aria-label="Розділи подорожі" hidden>
+    <a href="#top" data-chapter="top"><span>01</span>Море</a>
+    <a href="#traces" data-chapter="traces"><span>02</span>Камінь</a>
+    <a href="#worlds" data-chapter="worlds"><span>03</span>Відкриття</a>
+    <a href="#visit" data-chapter="visit"><span>04</span>Наживо <span aria-hidden="true">↗</span></a>
+  </nav>
+  <footer class="footer container"><a class="brand" href="#top">ГЛИБШЕ<span class="brand-dot">.</span></a><span>Історія 01 · Море, якого немає</span><a href="#top">На поверхню <span aria-hidden="true">↑</span></a></footer>
+</body>
+</html>
