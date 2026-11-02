@@ -158,40 +158,182 @@
             <button type="button" role="tab" class="map-pill" data-spot-tab="3" aria-selected="false"><span>04</span> Бакота</button>
             <button type="button" role="tab" class="map-pill" data-spot-tab="4" aria-selected="false"><span>05</span> Печера Атлантида</button>
           </div>
+          <div class="map-carousel-hint" aria-hidden="true">
+            <span>← Гортайте картки або натискайте на мапі →</span>
+          </div>
         </div>
 
-        <aside class="map-card" id="map-detail-card" aria-live="polite">
-          <div class="map-card-head">
-            <span class="map-card-index" id="map-detail-num">03</span>
-            <div class="map-card-tags">
-              <span class="map-tag" id="map-detail-tag">Каньйон & Морське дно</span>
-              <span class="map-coord" id="map-detail-coords">48.673° N, 26.568° E</span>
+        <div class="map-cards-carousel" id="map-cards-carousel" aria-label="Осередки рифу" role="region">
+          <!-- 01 Сатанів -->
+          <article class="map-card" data-spot-card="0" id="map-card-0" aria-label="Сатанів">
+            <div class="map-card-head">
+              <span class="map-card-index">01</span>
+              <div class="map-card-tags">
+                <span class="map-tag">Мінеральні джерела & Рифові вали</span>
+                <span class="map-coord">49.251° N, 26.248° E</span>
+              </div>
             </div>
-          </div>
-          <h3 class="map-card-title" id="map-detail-title">Кам'янець-Подільський</h3>
-          <p class="map-card-subtitle" id="map-detail-subtitle">Смотрицький каньйон & Місто на скелі</p>
-          <p class="map-card-desc" id="map-detail-desc">Серце Подільських Товтр. Річка Смотрич прорізала товщу давнього морського дна, утворивши каньйон завглибшки до 40 метрів. Середньовічна фортеця буквально виростає з вапнякових скель, фундаментом яких є давній коралово-мохуватковий риф.</p>
-          <dl class="map-card-specs">
-            <div>
-              <dt>Висота над рівнем моря</dt>
-              <dd id="map-detail-alt">~210 м над р. м.</dd>
+            <h3 class="map-card-title">Сатанів</h3>
+            <p class="map-card-subtitle">Північні ворота Товтр · Збручанське пасмо</p>
+            <p class="map-card-desc">Початок 200-кілометрового рифового пасма на кордоні Хмельниччини та Тернопільщини. Вапнякові хребти вкриті буковими пралісами над річкою Збруч. У надрах залягають знамениті мінеральні води типу «Нафтуся».</p>
+            <dl class="map-card-specs">
+              <div>
+                <dt>Висота над рівнем моря</dt>
+                <dd>~320 м над р. м.</dd>
+              </div>
+              <div>
+                <dt>Геологічний вік порід</dt>
+                <dd>14–16 млн років (Міоцен)</dd>
+              </div>
+              <div>
+                <dt>Що шукати досліднику</dt>
+                <dd>Залишки давніх рифових гребенів, Сатанівський замок на вапняковій кручі, печерний монастир у товтрах</dd>
+              </div>
+            </dl>
+            <div class="map-card-actions">
+              <a class="map-route-btn" href="https://maps.google.com/?q=49.251,26.248" target="_blank" rel="noopener noreferrer">
+                <span>Прокласти маршрут (Google Maps)</span>
+                <span aria-hidden="true">↗</span>
+              </a>
             </div>
-            <div>
-              <dt>Геологічний вік порід</dt>
-              <dd id="map-detail-age">14–420 млн років (Силур–Міоцен)</dd>
+          </article>
+
+          <!-- 02 Товтра Сокіл -->
+          <article class="map-card" data-spot-card="1" id="map-card-1" aria-label="Товтра Сокіл">
+            <div class="map-card-head">
+              <span class="map-card-index">02</span>
+              <div class="map-card-tags">
+                <span class="map-tag">Біогермний риф & Степові трави</span>
+                <span class="map-coord">48.835° N, 26.634° E</span>
+              </div>
             </div>
-            <div>
-              <dt>Що шукати досліднику</dt>
-              <dd id="map-detail-feature">Вертикальні прямовисні стіни з горизонтальними нашаруваннями порід, міст «Стрімка лань», Замковий міст на природному перешийку</dd>
+            <h3 class="map-card-title">Товтра Сокіл</h3>
+            <p class="map-card-subtitle">Скелястий вапняковий конус біля Нігина</p>
+            <p class="map-card-desc">Одна з найвищих і найстрімкіших товтр Поділля. Це окремий підводний біогермний рифовий масив, складений мільярдами мікроскопічних водоростей і мохуваток, що різко здіймається над довколишніми рівнинними полями на понад 80 метрів.</p>
+            <dl class="map-card-specs">
+              <div>
+                <dt>Висота над рівнем моря</dt>
+                <dd>~345 м над р. м.</dd>
+              </div>
+              <div>
+                <dt>Геологічний вік порід</dt>
+                <dd>14–15 млн років</dd>
+              </div>
+              <div>
+                <dt>Що шукати досліднику</dt>
+                <dd>Круті обривисті схили, відкриті кам'янисті відслонення, реліктова степова рослинність міоценового віку</dd>
+              </div>
+            </dl>
+            <div class="map-card-actions">
+              <a class="map-route-btn" href="https://maps.google.com/?q=48.835,26.634" target="_blank" rel="noopener noreferrer">
+                <span>Прокласти маршрут (Google Maps)</span>
+                <span aria-hidden="true">↗</span>
+              </a>
             </div>
-          </dl>
-          <div class="map-card-actions">
-            <a class="map-route-btn" id="map-detail-link" href="https://maps.google.com/?q=48.673,26.568" target="_blank" rel="noopener noreferrer">
-              <span>Прокласти маршрут (Google Maps)</span>
-              <span aria-hidden="true">↗</span>
-            </a>
-          </div>
-        </aside>
+          </article>
+
+          <!-- 03 Кам'янець-Подільський -->
+          <article class="map-card active" data-spot-card="2" id="map-card-2" aria-label="Кам'янець-Подільський">
+            <div class="map-card-head">
+              <span class="map-card-index">03</span>
+              <div class="map-card-tags">
+                <span class="map-tag">Каньйон & Морське дно</span>
+                <span class="map-coord">48.673° N, 26.568° E</span>
+              </div>
+            </div>
+            <h3 class="map-card-title">Кам'янець-Подільський</h3>
+            <p class="map-card-subtitle">Смотрицький каньйон & Місто на скелі</p>
+            <p class="map-card-desc">Серце Подільських Товтр. Річка Смотрич прорізала товщу давнього морського дна, утворивши каньйон завглибшки до 40 метрів. Середньовічна фортеця буквально виростає з вапнякових скель, фундаментом яких є давній коралово-мохуватковий риф.</p>
+            <dl class="map-card-specs">
+              <div>
+                <dt>Висота над рівнем моря</dt>
+                <dd>~210 м над р. м.</dd>
+              </div>
+              <div>
+                <dt>Геологічний вік порід</dt>
+                <dd>14–420 млн років (Силур–Міоцен)</dd>
+              </div>
+              <div>
+                <dt>Що шукати досліднику</dt>
+                <dd>Вертикальні прямовисні стіни з горизонтальними нашаруваннями порід, міст «Стрімка лань», Замковий міст на природному перешийку</dd>
+              </div>
+            </dl>
+            <div class="map-card-actions">
+              <a class="map-route-btn" href="https://maps.google.com/?q=48.673,26.568" target="_blank" rel="noopener noreferrer">
+                <span>Прокласти маршрут (Google Maps)</span>
+                <span aria-hidden="true">↗</span>
+              </a>
+            </div>
+          </article>
+
+          <!-- 04 Бакота -->
+          <article class="map-card" data-spot-card="3" id="map-card-3" aria-label="Бакота">
+            <div class="map-card-head">
+              <span class="map-card-index">04</span>
+              <div class="map-card-tags">
+                <span class="map-tag">Затоплена долина & Печери</span>
+                <span class="map-coord">48.583° N, 26.996° E</span>
+              </div>
+            </div>
+            <h3 class="map-card-title">Бакота</h3>
+            <p class="map-card-subtitle">Дністровський каньйон & Біла скеля</p>
+            <p class="map-card-desc">Південний край Товтр над величним Дністровським водосховищем. Білосніжні 120-метрові вапнякові кручі обриваються прямо в бірюзову воду затоки. Завдяки скелястому амфітеатру тут утворився теплий, майже субтропічний мікроклімат.</p>
+            <dl class="map-card-specs">
+              <div>
+                <dt>Висота над рівнем моря</dt>
+                <dd>~150 м над р. м.</dd>
+              </div>
+              <div>
+                <dt>Геологічний вік порід</dt>
+                <dd>14–15 млн років</dd>
+              </div>
+              <div>
+                <dt>Що шукати досліднику</dt>
+                <dd>Найдавніший скельний монастир у товтрових породах (XI ст.), оглядовий майданчик Білої скелі, джерела кришталевої води</dd>
+              </div>
+            </dl>
+            <div class="map-card-actions">
+              <a class="map-route-btn" href="https://maps.google.com/?q=48.583,26.996" target="_blank" rel="noopener noreferrer">
+                <span>Прокласти маршрут (Google Maps)</span>
+                <span aria-hidden="true">↗</span>
+              </a>
+            </div>
+          </article>
+
+          <!-- 05 Печера Атлантида -->
+          <article class="map-card" data-spot-card="4" id="map-card-4" aria-label="Печера Атлантида">
+            <div class="map-card-head">
+              <span class="map-card-index">05</span>
+              <div class="map-card-tags">
+                <span class="map-tag">Триярусний підземний лабіринт</span>
+                <span class="map-coord">48.599° N, 26.342° E</span>
+              </div>
+            </div>
+            <h3 class="map-card-title">Печера «Атлантида»</h3>
+            <p class="map-card-subtitle">с. Завалля над річкою Збруч</p>
+            <p class="map-card-desc">Єдина в Поділлі триярусна карстова печера загальною довжиною понад 2,5 км. Утворилася у вимитих водою товтрових осадових пластах. Відома унікальними залами, вкритими кристалами гіпсу найрізноманітніших форм («квіти Атлантиди»).</p>
+            <dl class="map-card-specs">
+              <div>
+                <dt>Висота над рівнем моря</dt>
+                <dd>~195 м над р. м.</dd>
+              </div>
+              <div>
+                <dt>Геологічний вік порід</dt>
+                <dd>Міоценові гіпси та вапняки</dd>
+              </div>
+              <div>
+                <dt>Що шукати досліднику</dt>
+                <dd>Триярусна будова галерей, кристалічні зали «Динамо», «Червоні маки», спелеологічні експедиційні маршрути</dd>
+              </div>
+            </dl>
+            <div class="map-card-actions">
+              <a class="map-route-btn" href="https://maps.google.com/?q=48.599,26.342" target="_blank" rel="noopener noreferrer">
+                <span>Прокласти маршрут (Google Maps)</span>
+                <span aria-hidden="true">↗</span>
+              </a>
+            </div>
+          </article>
+        </div>
       </div>
     </section>
 

@@ -28,8 +28,19 @@ let manuallySelectedMotion = false;
 let preloading = false;
 let raf = 0;
 let latestFrame = 0;
+let targetFrame = 0;
+let currentFrame = 0;
+let isLerping = false;
 let lastCaption = -1;
 let lastPosition = null;
+
+function triggerHaptic(ms = 8) {
+  try {
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      navigator.vibrate(ms);
+    }
+  } catch (e) {}
+}
 
 const clamp = (n, low = 0, high = 1) => Math.max(low, Math.min(high, n));
 const smooth = (start, end, value) => {
@@ -273,15 +284,51 @@ function updateSoundModulation(frameProgress) {
 // Scroll Engine & Stage Sync
 // ==========================================================================
 
+function stepLerp() {
+  if (motionOff) {
+    isLerping = false;
+    return;
+  }
+  const diff = targetFrame - currentFrame;
+  if (Math.abs(diff) > 0.004) {
+    currentFrame += diff * 0.12;
+    paint(currentFrame);
+    const norm = currentFrame / Math.max(1, count - 1);
+    const zoom = 1 + norm * 0.055;
+    canvas.style.transform = `scale(${zoom.toFixed(4)})`;
+    requestAnimationFrame(stepLerp);
+  } else {
+    currentFrame = targetFrame;
+    paint(currentFrame);
+    const norm = currentFrame / Math.max(1, count - 1);
+    const zoom = 1 + norm * 0.055;
+    canvas.style.transform = `scale(${zoom.toFixed(4)})`;
+    isLerping = false;
+  }
+}
+
+function startLerp() {
+  if (!isLerping && !motionOff) {
+    isLerping = true;
+    requestAnimationFrame(stepLerp);
+  }
+}
+
 function update() {
   raf = 0;
   if (motionOff) return;
   const distance = Math.max(1, journey.offsetHeight - stage.offsetHeight);
   const progress = clamp(-journey.getBoundingClientRect().top / distance);
   const frameProgress = clamp((progress - .12) / .71);
-  latestFrame = frameProgress * (count - 1);
+  targetFrame = frameProgress * (count - 1);
+  latestFrame = targetFrame;
   document.querySelector('#era-progress').style.width = `${frameProgress * 100}%`;
-  document.querySelector('#era').textContent = frameProgress < .02 ? 'Сьогодні' : frameProgress > .98 ? 'Давнє море' : 'Крізь час';
+  const eraLabel = frameProgress < .02 ? 'Сьогодні' : frameProgress > .98 ? 'Давнє море' : 'Крізь час';
+  const eraEl = document.querySelector('#era');
+  if (eraEl && eraEl.textContent !== eraLabel) {
+    eraEl.textContent = eraLabel;
+    triggerHaptic(6);
+  }
   
   updateSoundModulation(frameProgress);
 
@@ -294,6 +341,7 @@ function update() {
   const caption = progress < .42 ? 0 : progress < .67 ? 1 : 2;
   if (caption !== lastCaption) {
     [sceneLabel.textContent, sceneTitle.innerHTML, sceneDescription.textContent] = captions[caption];
+    if (lastCaption !== -1) triggerHaptic(8);
     lastCaption = caption;
   }
   const captionStart = caption === 0 ? .15 : caption === 1 ? .42 : .67;
@@ -301,7 +349,7 @@ function update() {
   const opacity = smooth(captionStart, captionStart + .045, progress) * (1 - smooth(captionEnd - .045, captionEnd, progress));
   sceneCopy.style.opacity = opacity;
   sceneCopy.style.transform = `translateY(${16 * (1 - opacity)}px)`;
-  if (lastPosition !== latestFrame) { paint(latestFrame); lastPosition = latestFrame; }
+  startLerp();
 }
 
 function schedule() { if (!raf && !motionOff) raf = requestAnimationFrame(update); }
@@ -381,6 +429,7 @@ for (const button of landmarkButtons) {
     document.querySelector('#landmark-category').textContent = landmarkContent[index][0];
     document.querySelector('#landmark-title').textContent = landmarkContent[index][1];
     document.querySelector('#landmark-description').textContent = landmarkContent[index][2];
+    triggerHaptic(8);
     const panel = document.querySelector('#landmark-panel');
     if (panel && panel.getBoundingClientRect().bottom > window.innerHeight - 80) {
       panel.scrollIntoView({ block: 'nearest', behavior: reducedMotion.matches ? 'auto' : 'smooth' });
@@ -458,20 +507,15 @@ const mapSpotsData = [
 function initReefMap() {
   const hotspots = document.querySelectorAll('.map-hotspot');
   const pills = document.querySelectorAll('.map-pill');
-  const numEl = document.querySelector('#map-detail-num');
-  const titleEl = document.querySelector('#map-detail-title');
-  const subtitleEl = document.querySelector('#map-detail-subtitle');
-  const tagEl = document.querySelector('#map-detail-tag');
-  const coordsEl = document.querySelector('#map-detail-coords');
-  const altEl = document.querySelector('#map-detail-alt');
-  const ageEl = document.querySelector('#map-detail-age');
-  const descEl = document.querySelector('#map-detail-desc');
-  const featureEl = document.querySelector('#map-detail-feature');
-  const linkEl = document.querySelector('#map-detail-link');
+  const carousel = document.querySelector('#map-cards-carousel');
+  const cards = document.querySelectorAll('.map-cards-carousel .map-card');
+  let currentSpot = 2; // Default: 03 Кам'янець-Подільський
+  let isProgrammaticScroll = false;
+  let scrollTimeout = null;
 
-  function selectSpot(index) {
-    const data = mapSpotsData[index];
-    if (!data) return;
+  function selectSpot(index, fromUserScroll = false) {
+    if (index < 0 || index >= mapSpotsData.length) return;
+    currentSpot = index;
 
     hotspots.forEach((spot, i) => {
       const isSelected = i === index;
@@ -485,16 +529,21 @@ function initReefMap() {
       pill.setAttribute('aria-selected', String(isSelected));
     });
 
-    if (numEl) numEl.textContent = data.num;
-    if (titleEl) titleEl.textContent = data.name;
-    if (subtitleEl) subtitleEl.textContent = data.subtitle;
-    if (tagEl) tagEl.textContent = data.tag;
-    if (coordsEl) coordsEl.textContent = data.coords;
-    if (altEl) altEl.textContent = data.alt;
-    if (ageEl) ageEl.textContent = data.age;
-    if (descEl) descEl.textContent = data.desc;
-    if (featureEl) featureEl.textContent = data.feature;
-    if (linkEl) linkEl.href = data.link;
+    cards.forEach((card, i) => {
+      card.classList.toggle('active', i === index);
+    });
+
+    if (!fromUserScroll && carousel) {
+      const targetCard = cards[index];
+      if (targetCard) {
+        isProgrammaticScroll = true;
+        clearTimeout(scrollTimeout);
+        targetCard.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        scrollTimeout = setTimeout(() => { isProgrammaticScroll = false; }, 600);
+      }
+    }
+
+    triggerHaptic(8);
   }
 
   hotspots.forEach((spot, index) => {
@@ -504,6 +553,34 @@ function initReefMap() {
   pills.forEach((pill, index) => {
     pill.addEventListener('click', () => selectSpot(index));
   });
+
+  if (carousel) {
+    let scrollDebounce = null;
+    carousel.addEventListener('scroll', () => {
+      if (isProgrammaticScroll) return;
+      clearTimeout(scrollDebounce);
+      scrollDebounce = setTimeout(() => {
+        const carouselRect = carousel.getBoundingClientRect();
+        const carouselCenter = carouselRect.left + carouselRect.width / 2;
+        let closestIndex = 0;
+        let minDistance = Infinity;
+
+        cards.forEach((card, i) => {
+          const cardRect = card.getBoundingClientRect();
+          const cardCenter = cardRect.left + cardRect.width / 2;
+          const dist = Math.abs(carouselCenter - cardCenter);
+          if (dist < minDistance) {
+            minDistance = dist;
+            closestIndex = i;
+          }
+        });
+
+        if (closestIndex !== currentSpot) {
+          selectSpot(closestIndex, true);
+        }
+      }, 50);
+    }, { passive: true });
+  }
 }
 
 initReefMap();
@@ -554,11 +631,25 @@ const dock = document.querySelector('.chapter-dock');
 const chapterLinks = [...dock.querySelectorAll('[data-chapter]')];
 const chapterSections = chapterLinks.map(link => document.getElementById(link.dataset.chapter));
 let dockFrame = 0;
+let lastScrollPos = 0;
 
 function updateDock() {
   dockFrame = 0;
+  const currentScroll = window.scrollY;
   const mobileJourneyVisible = matchMedia('(max-width: 700px), (max-width: 1000px) and (max-height: 500px)').matches && journey.getBoundingClientRect().bottom > window.innerHeight * .5;
-  dock.hidden = mobileJourneyVisible || window.scrollY < window.innerHeight * .65 || document.querySelector('#about').getBoundingClientRect().top < window.innerHeight * .6;
+  dock.hidden = mobileJourneyVisible || currentScroll < window.innerHeight * .65 || document.querySelector('#about').getBoundingClientRect().top < window.innerHeight * .6;
+
+  if (matchMedia('(max-width: 768px)').matches) {
+    if (currentScroll > lastScrollPos + 8 && currentScroll > window.innerHeight) {
+      dock.classList.add('dock-hidden');
+    } else if (currentScroll < lastScrollPos - 8) {
+      dock.classList.remove('dock-hidden');
+    }
+  } else {
+    dock.classList.remove('dock-hidden');
+  }
+  lastScrollPos = currentScroll;
+
   let active = 0;
   chapterSections.forEach((section, index) => {
     if (section && section.getBoundingClientRect().top < window.innerHeight * .5) active = index;
@@ -681,15 +772,37 @@ async function selectTrace(index) {
     tracePanel.setAttribute('aria-labelledby', traceTabs[index].id);
     activeTrace = index;
     traceStatus.textContent = '';
+    triggerHaptic(8);
     const panelTop = tracePanel.getBoundingClientRect().top;
-    if (panelTop < 100 || panelTop > window.innerHeight * .45) {
-      tracePanel.scrollIntoView({ block:'start', behavior: reducedMotion.matches ? 'auto' : 'smooth' });
+    if (panelTop < 40 || panelTop > window.innerHeight * .65) {
+      tracePanel.scrollIntoView({ block:'nearest', behavior: reducedMotion.matches ? 'auto' : 'smooth' });
     }
   } catch {
     if (request === traceRequest) traceStatus.textContent = 'Фото не завантажилося. Спробуйте обрати його ще раз.';
   } finally {
     if (request === traceRequest) tracePanel.removeAttribute('aria-busy');
   }
+}
+
+let traceTouchStartX = 0;
+let traceTouchStartY = 0;
+if (tracePanel) {
+  tracePanel.addEventListener('touchstart', e => {
+    traceTouchStartX = e.changedTouches[0].clientX;
+    traceTouchStartY = e.changedTouches[0].clientY;
+  }, { passive: true });
+
+  tracePanel.addEventListener('touchend', e => {
+    const diffX = e.changedTouches[0].clientX - traceTouchStartX;
+    const diffY = e.changedTouches[0].clientY - traceTouchStartY;
+    if (Math.abs(diffX) > 45 && Math.abs(diffX) > Math.abs(diffY) * 1.3) {
+      if (diffX < 0) {
+        selectTrace((activeTrace + 1) % traceTabs.length);
+      } else {
+        selectTrace((activeTrace - 1 + traceTabs.length) % traceTabs.length);
+      }
+    }
+  }, { passive: true });
 }
 
 traceTabs.forEach((tab, index) => {
