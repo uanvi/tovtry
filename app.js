@@ -509,117 +509,78 @@ function initReefMap() {
   const pills = document.querySelectorAll('.map-pill');
   const carousel = document.querySelector('#map-cards-carousel');
   const cards = document.querySelectorAll('.map-cards-carousel .map-card');
-  let currentSpot = 2; // Default: 03 Кам'янець-Подільський
+  const carouselLayout = matchMedia('(max-width: 1050px)');
+  let currentSpot = 2;
   let isProgrammaticScroll = false;
   let scrollTimeout = null;
+  let layoutFrame = 0;
+
+  function syncSelectionFromScroll() {
+    if (!carousel || !carouselLayout.matches) return;
+    const rect = carousel.getBoundingClientRect();
+    const center = rect.left + rect.width / 2;
+    let closestIndex = currentSpot;
+    let minDistance = Infinity;
+    cards.forEach((card, index) => {
+      const bounds = card.getBoundingClientRect();
+      const distance = Math.abs(center - bounds.left - bounds.width / 2);
+      if (distance < minDistance) { minDistance = distance; closestIndex = index; }
+    });
+    if (closestIndex !== currentSpot) selectSpot(closestIndex, true);
+  }
+
+  function alignCarousel(behavior = 'instant') {
+    if (!carousel || !carouselLayout.matches || !cards[currentSpot]) return;
+    const viewport = carousel.getBoundingClientRect();
+    const card = cards[currentSpot].getBoundingClientRect();
+    const left = carousel.scrollLeft + card.left + card.width / 2 - viewport.left - viewport.width / 2;
+    isProgrammaticScroll = true;
+    clearTimeout(scrollTimeout);
+    // Scroll only the carousel; page load and breakpoint changes must not move the page.
+    carousel.scrollTo({ left, behavior });
+    scrollTimeout = setTimeout(() => { isProgrammaticScroll = false; syncSelectionFromScroll(); }, 150);
+  }
 
   function selectSpot(index, fromUserScroll = false) {
-    if (index < 0 || index >= mapSpotsData.length) return;
+    if (index < 0 || index >= cards.length) return;
     currentSpot = index;
-
     hotspots.forEach((spot, i) => {
-      const isSelected = i === index;
-      spot.classList.toggle('active', isSelected);
-      spot.setAttribute('aria-pressed', String(isSelected));
+      spot.classList.toggle('active', i === index);
+      spot.setAttribute('aria-pressed', String(i === index));
     });
-
     pills.forEach((pill, i) => {
-      const isSelected = i === index;
-      pill.classList.toggle('active', isSelected);
-      pill.setAttribute('aria-selected', String(isSelected));
+      pill.classList.toggle('active', i === index);
+      pill.setAttribute('aria-selected', String(i === index));
     });
-
-    cards.forEach((card, i) => {
-      card.classList.toggle('active', i === index);
-    });
-
-    if (!fromUserScroll && carousel) {
-      const targetCard = cards[index];
-      if (targetCard) {
-        isProgrammaticScroll = true;
-        clearTimeout(scrollTimeout);
-        targetCard.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-        scrollTimeout = setTimeout(() => { isProgrammaticScroll = false; }, 600);
-      }
+    cards.forEach((card, i) => card.classList.toggle('active', i === index));
+    if (!fromUserScroll) {
+      alignCarousel(reducedMotion.matches ? 'instant' : 'smooth');
+      triggerHaptic(8);
     }
-
-    triggerHaptic(8);
   }
 
-  hotspots.forEach((spot, index) => {
-    spot.addEventListener('click', () => selectSpot(index));
-  });
+  hotspots.forEach((spot, index) => spot.addEventListener('click', () => selectSpot(index)));
+  pills.forEach((pill, index) => pill.addEventListener('click', () => selectSpot(index)));
+  document.querySelector('#map-prev-btn')?.addEventListener('click', () => selectSpot((currentSpot - 1 + cards.length) % cards.length));
+  document.querySelector('#map-next-btn')?.addEventListener('click', () => selectSpot((currentSpot + 1) % cards.length));
 
-  pills.forEach((pill, index) => {
-    pill.addEventListener('click', () => selectSpot(index));
-  });
+  // Native horizontal scrolling is the only swipe mechanism. Do not advance again on touchend.
+  carousel?.addEventListener('scroll', () => {
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      isProgrammaticScroll = false;
+      syncSelectionFromScroll();
+    }, isProgrammaticScroll ? 150 : 50);
+  }, { passive: true });
 
-  const prevBtn = document.querySelector('#map-prev-btn');
-  const nextBtn = document.querySelector('#map-next-btn');
-
-  if (prevBtn) {
-    prevBtn.addEventListener('click', () => {
-      const prev = (currentSpot - 1 + mapSpotsData.length) % mapSpotsData.length;
-      selectSpot(prev);
-    });
+  function scheduleAlignment() {
+    cancelAnimationFrame(layoutFrame);
+    layoutFrame = requestAnimationFrame(() => alignCarousel());
   }
-
-  if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
-      const next = (currentSpot + 1) % mapSpotsData.length;
-      selectSpot(next);
-    });
-  }
-
-  // Touch swipe directly on map cards carousel
-  let cardTouchStartX = 0;
-  let cardTouchStartY = 0;
-  if (carousel) {
-    carousel.addEventListener('touchstart', e => {
-      cardTouchStartX = e.changedTouches[0].clientX;
-      cardTouchStartY = e.changedTouches[0].clientY;
-    }, { passive: true });
-
-    carousel.addEventListener('touchend', e => {
-      const diffX = e.changedTouches[0].clientX - cardTouchStartX;
-      const diffY = e.changedTouches[0].clientY - cardTouchStartY;
-      if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY) * 1.3) {
-        if (diffX < 0) {
-          selectSpot((currentSpot + 1) % mapSpotsData.length);
-        } else {
-          selectSpot((currentSpot - 1 + mapSpotsData.length) % mapSpotsData.length);
-        }
-      }
-    }, { passive: true });
-  }
-
-  if (carousel) {
-    let scrollDebounce = null;
-    carousel.addEventListener('scroll', () => {
-      if (isProgrammaticScroll) return;
-      clearTimeout(scrollDebounce);
-      scrollDebounce = setTimeout(() => {
-        const carouselRect = carousel.getBoundingClientRect();
-        const carouselCenter = carouselRect.left + carouselRect.width / 2;
-        let closestIndex = 0;
-        let minDistance = Infinity;
-
-        cards.forEach((card, i) => {
-          const cardRect = card.getBoundingClientRect();
-          const cardCenter = cardRect.left + cardRect.width / 2;
-          const dist = Math.abs(carouselCenter - cardCenter);
-          if (dist < minDistance) {
-            minDistance = dist;
-            closestIndex = i;
-          }
-        });
-
-        if (closestIndex !== currentSpot) {
-          selectSpot(closestIndex, true);
-        }
-      }, 50);
-    }, { passive: true });
-  }
+  carouselLayout.addEventListener('change', scheduleAlignment);
+  if (carousel) new ResizeObserver(scheduleAlignment).observe(carousel);
+  selectSpot(currentSpot, true);
+  scheduleAlignment();
 }
 
 initReefMap();
