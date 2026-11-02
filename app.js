@@ -554,6 +554,45 @@ function initReefMap() {
     pill.addEventListener('click', () => selectSpot(index));
   });
 
+  const prevBtn = document.querySelector('#map-prev-btn');
+  const nextBtn = document.querySelector('#map-next-btn');
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      const prev = (currentSpot - 1 + mapSpotsData.length) % mapSpotsData.length;
+      selectSpot(prev);
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      const next = (currentSpot + 1) % mapSpotsData.length;
+      selectSpot(next);
+    });
+  }
+
+  // Touch swipe directly on map cards carousel
+  let cardTouchStartX = 0;
+  let cardTouchStartY = 0;
+  if (carousel) {
+    carousel.addEventListener('touchstart', e => {
+      cardTouchStartX = e.changedTouches[0].clientX;
+      cardTouchStartY = e.changedTouches[0].clientY;
+    }, { passive: true });
+
+    carousel.addEventListener('touchend', e => {
+      const diffX = e.changedTouches[0].clientX - cardTouchStartX;
+      const diffY = e.changedTouches[0].clientY - cardTouchStartY;
+      if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY) * 1.3) {
+        if (diffX < 0) {
+          selectSpot((currentSpot + 1) % mapSpotsData.length);
+        } else {
+          selectSpot((currentSpot - 1 + mapSpotsData.length) % mapSpotsData.length);
+        }
+      }
+    }, { passive: true });
+  }
+
   if (carousel) {
     let scrollDebounce = null;
     carousel.addEventListener('scroll', () => {
@@ -675,51 +714,48 @@ const traceItems = [
   {
     "id": "fossils",
     "file": "fossils.png",
-    "location": "Морські мушлі у вапняку · ілюстративний матеріал",
+    "location": "Морські мушлі у вапняку",
     "author": "матеріали проєкту",
     "source": null,
     "license": null,
     "licenseUrl": null,
-    "alt": "Світла порода з численними спіральними мушлями та стулками молюсків, ілюстративне зображення.",
+    "alt": "Світла порода з численними спіральними мушлями та стулками молюсків.",
     "kicker": "Морське життя → гірська порода",
     "title": "Мушля стає частиною каменю.",
     "description": "Рештки морських організмів можуть зберігатися в осадовій породі. Це зображення допомагає придивитися до форм мушель і уявити, як сліди життя стають частиною вапняку.",
-    "observation": "Знайдіть спіральні мушлі та широкі ребристі стулки. Порівняйте їхні форми; масштабну лінійку на цьому зображенні не наведено.",
-    "provenance": "Ілюстративний матеріал, наданий для проєкту. Точну географічну прив’язку й масштаб зображення не вказано.",
+    "observation": "Знайдіть спіральні мушлі та широкі ребристі стулки. Порівняйте їхні форми.",
     "width": 1449,
     "height": 1086
   },
   {
     "id": "limestone",
     "file": "limestone.jpg",
-    "location": "Відслонення породи · ілюстративний матеріал",
+    "location": "Відслонення породи",
     "author": "матеріали проєкту",
     "source": null,
     "license": null,
     "licenseUrl": null,
-    "alt": "Шарувата світла скеля з вертикальними тріщинами у теплому світлі, ілюстративне зображення.",
+    "alt": "Шарувата світла скеля з вертикальними тріщинами у теплому світлі.",
     "kicker": "Відслонення → будова породи",
     "title": "Камінь відкриває свою будову.",
     "description": "Природні відслонення дають змогу роздивитися будову породи. Тут добре помітні горизонтальні лінії та вертикальні тріщини — деталі, які губляться в загальному краєвиді.",
     "observation": "Простежте лінії шарів і вертикальні тріщини. Подивіться, як вони ділять скелю на окремі блоки.",
-    "provenance": "Ілюстративний матеріал про будову породи. Конкретне місце зйомки й вік породи для цього зображення не підтверджено.",
     "width": 1536,
     "height": 1024
   },
   {
     "id": "tovtry",
     "file": "tovtry.png",
-    "location": "Скелясті пагорби · ілюстративний пейзаж",
+    "location": "Скелясті пагорби",
     "author": "матеріали проєкту",
     "source": null,
     "license": null,
     "licenseUrl": null,
-    "alt": "Панорама скелястих пагорбів, трав’янистих схилів і полів у теплому світлі, ілюстративний пейзаж.",
+    "alt": "Панорама скелястих пагорбів, трав’янистих схилів і полів у теплому світлі.",
     "kicker": "Рифові споруди → сучасний рельєф",
     "title": "Морська історія в силуеті пагорбів.",
     "description": "Товтри — залишки давніх рифових споруд. Їхні сучасні обриси змінювалися під дією вивітрювання та ерозії. Цей пейзаж ілюструє, як скелясті пагорби можуть вирізнятися серед навколишнього рельєфу.",
     "observation": "Порівняйте обриси відкритих скель із пологими полями вдалині. Знайдіть межу між каменем, трав’янистими схилами та рівниною.",
-    "provenance": "Ілюстративний пейзаж, наданий для проєкту. Конкретну локацію для цього зображення не вказано.",
     "width": 1600,
     "height": 726
   }
@@ -751,19 +787,10 @@ async function selectTrace(index) {
     tracePhoto.alt = item.alt;
     tracePhoto.width = item.width;
     tracePhoto.height = item.height;
-    for (const key of ['location','author','kicker','title','description','observation','provenance']) {
+    for (const key of ['location','kicker','title','description','observation']) {
       const el = document.querySelector(`#trace-${key}`);
       if (el) el.textContent = item[key];
     }
-    const traceSource = document.querySelector('#trace-source');
-    if (traceSource) traceSource.removeAttribute('href');
-    const traceLicense = document.querySelector('#trace-license');
-    if (traceLicense) {
-      traceLicense.removeAttribute('href');
-      traceLicense.textContent = '';
-      traceLicense.hidden = true;
-    }
-    document.querySelector('#trace-index').textContent = String(index+1).padStart(2,'0');
     document.querySelector('#trace-counter').textContent = `${String(index+1).padStart(2,'0')} / 03`;
     traceTabs.forEach((tab,i) => {
       tab.setAttribute('aria-selected', String(i === index));

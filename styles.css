@@ -730,79 +730,109 @@ h1 em {
   color: rgba(247, 244, 237, 0.6);
 }
 
-.traces-heading {
+.traces-heading,
+.discovery-heading {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 35px;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+@media (min-width: 900px) {
+  .traces-heading,
+  .discovery-heading {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    align-items: baseline;
+    gap: 48px;
+    margin-bottom: 40px;
+  }
+}
+
+.traces-heading h2,
+.discovery-heading h2 {
+  font-size: clamp(30px, 4.2vw, 56px);
+  line-height: 1.15;
+  margin: 0;
+  text-wrap: balance;
 }
 
 .traces-heading h2 em {
   color: var(--gold);
 }
 
+.discovery-heading h2 em {
+  color: var(--gold-dark);
+}
+
 .traces-heading > p {
   font-size: 15px;
+  line-height: 1.65;
   color: rgba(247, 244, 237, 0.75);
-  max-width: 380px;
+  margin: 0;
+  max-width: 500px;
+  text-wrap: pretty;
+}
+
+.discovery-heading > p {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink-secondary);
+  margin: 0;
+  max-width: 500px;
+  text-wrap: pretty;
 }
 
 .trace-tabs {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  margin-top: 45px;
-  border-block: 1px solid rgba(212, 175, 114, 0.25);
-  gap: 0;
-  position: sticky;
-  top: 90px;
-  z-index: 20;
-  background: rgba(25, 28, 26, 0.95);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  gap: 6px;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(212, 175, 114, 0.3);
+  border-radius: var(--radius-pill);
+  margin-bottom: 24px;
 }
 
 .trace-tabs button {
   display: flex;
   align-items: center;
-  gap: 16px;
-  min-height: 72px;
-  padding: 16px 24px;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 12px;
   border: 0;
-  border-right: 1px solid rgba(212, 175, 114, 0.2);
+  border-radius: var(--radius-pill);
   background: transparent;
-  color: rgba(247, 244, 237, 0.6);
-  text-align: left;
-  position: relative;
-  transition: background var(--transition), color var(--transition);
-}
-
-.trace-tabs button:last-child {
-  border-right: 0;
+  color: rgba(247, 244, 237, 0.7);
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition);
 }
 
 .trace-tabs button > span:first-child {
   font-family: var(--serif);
-  font-size: 24px;
+  font-size: 18px;
   color: var(--gold);
 }
 
 .trace-tabs strong {
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.02em;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .trace-tab-scale {
-  font-size: 11px;
-  letter-spacing: 0.1em;
+  font-size: 10px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  margin-left: auto;
   color: rgba(247, 244, 237, 0.5);
 }
 
 .trace-tabs button[aria-selected="true"] {
-  background: var(--paper);
+  background: #fff;
   color: var(--ink);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .trace-tabs button[aria-selected="true"] > span:first-child {
@@ -1384,23 +1414,6 @@ h1 em {
 /* ==========================================================================
    Section 04: Discovery & Comparison (Worlds)
    ========================================================================== */
-
-.discovery-heading {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 35px;
-  margin-bottom: 40px;
-}
-
-.discovery-heading h2 em {
-  color: var(--muted);
-}
-
-.discovery-heading > p {
-  font-size: 15px;
-  color: var(--ink-secondary);
-}
 
 .discovery-workspace {
   display: grid;
@@ -2189,32 +2202,69 @@ h1 em {
   .map-relief-wrapper { height: auto; gap: 12px; }
   
   .map-pills-bar {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    gap: 6px;
-    padding-bottom: 4px;
-    scrollbar-width: none;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 5px;
+    width: 100%;
+    margin-top: 6px;
+    padding: 0;
   }
-  .map-pills-bar::-webkit-scrollbar { display: none; }
   .map-pill {
-    flex-shrink: 0;
-    scroll-snap-align: start;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 7px 4px;
     font-size: 11px;
-    padding: 7px 12px;
+    font-weight: 600;
+    text-align: center;
+    border-radius: var(--radius-sm);
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .map-pill span {
+    font-size: 10px;
+    margin-right: 2px;
+  }
+  .map-pill .pill-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .map-carousel-hint {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
+    gap: 10px;
     font-size: 11px;
     font-weight: 600;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--gold-dark);
-    margin-top: 2px;
+    margin-top: 6px;
+    padding: 0 4px;
+  }
+
+  .map-hint-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--line-dark);
+    background: var(--paper-warm);
+    color: var(--ink);
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .map-hint-nav-btn:hover {
+    background: var(--ink);
+    color: #fff;
   }
 
   .map-cards-carousel {
@@ -2304,25 +2354,32 @@ h1 em {
 
   /* Traces Mobile Coupler */
   .trace-tabs {
-    position: sticky;
-    top: 70px;
-    z-index: 15;
-    background: rgba(244, 239, 230, 0.94);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    padding: 4px;
+    background: var(--paper-warm);
     border: 1px solid var(--line-dark);
     border-radius: var(--radius-pill);
-    padding: 4px;
-    display: flex;
-    gap: 4px;
     margin-bottom: 16px;
   }
   .trace-tabs button {
     flex: 1;
-    padding: 9px 8px;
+    min-height: 38px;
+    padding: 7px 6px;
     font-size: 11px;
     border-radius: var(--radius-pill);
     text-align: center;
+    justify-content: center;
+    color: var(--ink-secondary);
+  }
+  .trace-tabs button[aria-selected="true"] {
+    background: var(--ink);
+    color: #fff;
+  }
+  .trace-tabs button[aria-selected="true"] > span:first-child {
+    color: var(--gold);
   }
   .trace-tab-scale { display: none; }
   .trace-panel {
@@ -2384,11 +2441,10 @@ h1 em {
     border: 1px solid var(--line-dark);
   }
 
-  /* Chapter Dock on Mobile */
+  /* Chapter Dock on Mobile - Numbers Only */
   .chapter-dock {
-    max-width: calc(100vw - 28px);
-    overflow-x: auto;
-    padding: 4px;
+    max-width: fit-content;
+    padding: 4px 6px;
     bottom: max(12px, env(safe-area-inset-bottom, 12px));
     transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
   }
@@ -2397,11 +2453,37 @@ h1 em {
     opacity: 0 !important;
     pointer-events: none !important;
   }
-  .chapter-dock a { padding: 8px 12px; font-size: 11px; }
+  .chapter-dock a {
+    padding: 7px 11px;
+    min-height: 32px;
+    font-size: 11px;
+  }
+  .chapter-dock .dock-label {
+    display: none;
+  }
+  .chapter-dock a > span:first-child {
+    font-size: 12px;
+    font-weight: 700;
+  }
 
   /* Field Card Sheet on Mobile */
   .field-modal-sheet { padding: 24px 18px; }
   .sheet-task { grid-template-columns: 1fr; gap: 10px; }
+}
+
+@media (max-width: 480px) {
+  .map-pill .pill-name {
+    display: none;
+  }
+  .map-pill {
+    padding: 8px 3px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .map-pill span {
+    font-size: 12px;
+    margin: 0;
+  }
 }
 
 /* ==========================================================================

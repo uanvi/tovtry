@@ -88,20 +88,35 @@
     <section class="traces section-pad" id="traces">
       <div class="container">
         <div class="section-heading"><p class="eyebrow">02 / Сліди залишилися</p><span class="section-note">Атлас спостережень / 3 масштаби</span></div>
-        <div class="traces-heading"><h2>Камінь — це  <br><em>пам’ять моря.</em></h2><p>Від мушлі — до пасма пагорбів. <br>Оберіть масштаб і придивіться <br>до справжніх слідів минулого.</p></div>
-        <div class="trace-tabs" role="tablist" aria-label="Ілюстративні матеріали про давнє море">
-          <button type="button" role="tab" id="trace-tab-0" aria-selected="true" aria-controls="trace-panel" tabindex="0" data-trace="0"><span>01</span><strong>Життя в камені</strong><span class="trace-tab-scale">Макро</span></button>
-          <button type="button" role="tab" id="trace-tab-1" aria-selected="false" aria-controls="trace-panel" tabindex="-1" data-trace="1"><span>02</span><strong>Відкрита порода</strong><span class="trace-tab-scale">Скеля</span></button>
-          <button type="button" role="tab" id="trace-tab-2" aria-selected="false" aria-controls="trace-panel" tabindex="-1" data-trace="2"><span>03</span><strong>Форма ландшафту</strong><span class="trace-tab-scale">Панорама</span></button>
+        <div class="traces-heading">
+          <h2>Камінь — <em>пам’ять моря.</em></h2>
+          <p>Від мушлі — до пасма пагорбів. Оберіть масштаб і придивіться до справжніх слідів минулого.</p>
         </div>
         <div class="trace-panel" id="trace-panel" role="tabpanel" tabindex="0" aria-labelledby="trace-tab-0">
           <figure class="trace-figure">
-            <div class="trace-photo-wrap"><img id="trace-photo" src="assets/traces/fossils-1600.webp?v=89ac053b4b" srcset="assets/traces/fossils-800.webp?v=89ac053b4b 800w, assets/traces/fossils-1600.webp?v=89ac053b4b 1449w" sizes="(max-width: 900px) 100vw, 60vw" width="1449" height="1086" alt="Світла порода з численними спіральними мушлями та стулками молюсків, ілюстративне зображення." loading="lazy"><span class="trace-photo-badge">Ілюстративний матеріал</span><button type="button" class="trace-zoom" id="trace-zoom" aria-label="Роздивитися зображення на весь екран"><span aria-hidden="true">↗</span> Роздивитися</button><span id="trace-loading" class="trace-loading" role="status"></span></div>
-            <figcaption><span id="trace-location">Морські мушлі у вапняку · ілюстративний матеріал</span><span><span id="trace-source">Джерело: <span id="trace-author">матеріали проєкту</span></span><span id="trace-license" hidden></span></span></figcaption>
+            <div class="trace-photo-wrap">
+              <img id="trace-photo" src="assets/traces/fossils-1600.webp?v=89ac053b4b" srcset="assets/traces/fossils-800.webp?v=89ac053b4b 800w, assets/traces/fossils-1600.webp?v=89ac053b4b 1449w" sizes="(max-width: 900px) 100vw, 60vw" width="1449" height="1086" alt="Світла порода з численними спіральними мушлями та стулками молюсків." loading="lazy">
+              <button type="button" class="trace-zoom" id="trace-zoom" aria-label="Роздивитися зображення на весь екран"><span aria-hidden="true">↗</span> Роздивитися</button>
+              <span id="trace-loading" class="trace-loading" role="status"></span>
+            </div>
+            <figcaption><span id="trace-location">Морські мушлі у вапняку</span></figcaption>
           </figure>
-          <div class="trace-story"><span class="trace-story-index" id="trace-index" aria-hidden="true">01</span><p class="eyebrow" id="trace-kicker">Морське життя → гірська порода</p><h3 id="trace-title">Мушля стає <br>частиною каменю.</h3><p id="trace-description">Рештки морських організмів можуть зберігатися в осадовій породі. Це зображення допомагає придивитися до форм мушель і уявити, як сліди життя стають частиною вапняку.</p><div class="trace-observe"><span>На що подивитися</span><p id="trace-observation">Знайдіть спіральні мушлі та широкі ребристі стулки. Порівняйте їхні форми; масштабну лінійку на цьому зображенні не наведено.</p></div><p class="trace-provenance" id="trace-provenance">Ілюстративний матеріал, наданий для проєкту. Точну географічну прив’язку й масштаб зображення не вказано.</p><span class="trace-counter" id="trace-counter">01 / 03</span></div>
+          <div class="trace-story">
+            <div class="trace-tabs" role="tablist" aria-label="Масштаби спостережень">
+              <button type="button" role="tab" id="trace-tab-0" aria-selected="true" aria-controls="trace-panel" tabindex="0" data-trace="0"><span>01</span><strong>Життя в камені</strong><span class="trace-tab-scale">Макро</span></button>
+              <button type="button" role="tab" id="trace-tab-1" aria-selected="false" aria-controls="trace-panel" tabindex="-1" data-trace="1"><span>02</span><strong>Відкрита порода</strong><span class="trace-tab-scale">Скеля</span></button>
+              <button type="button" role="tab" id="trace-tab-2" aria-selected="false" aria-controls="trace-panel" tabindex="-1" data-trace="2"><span>03</span><strong>Форма ландшафту</strong><span class="trace-tab-scale">Панорама</span></button>
+            </div>
+            <p class="eyebrow" id="trace-kicker">Морське життя → гірська порода</p>
+            <h3 id="trace-title">Мушля стає частиною каменю.</h3>
+            <p id="trace-description">Рештки морських організмів можуть зберігатися в осадовій породі. Це зображення допомагає придивитися до форм мушель і уявити, як сліди життя стають частиною вапняку.</p>
+            <div class="trace-observe">
+              <span>На що подивитися</span>
+              <p id="trace-observation">Знайдіть спіральні мушлі та широкі ребристі стулки. Порівняйте їхні форми.</p>
+            </div>
+            <span class="trace-counter" id="trace-counter">01 / 03</span>
+          </div>
         </div>
-        <div class="trace-bottom"><p>Ілюстративні зображення надані для проєкту. Геологічні пояснення спираються на джерела, наведені нижче.</p><a href="#worlds">А тепер змініть епоху <span aria-hidden="true">↘</span></a></div>
       </div>
     </section>
     <dialog class="trace-dialog" id="trace-dialog" aria-label="Зображення у великому розмірі"><button type="button" id="trace-dialog-close" class="trace-dialog-close" aria-label="Закрити збільшене фото">Закрити <span aria-hidden="true">×</span></button><figure><img id="trace-dialog-image" alt=""><figcaption id="trace-dialog-caption"></figcaption></figure></dialog>
@@ -152,14 +167,16 @@
           </div>
 
           <div class="map-pills-bar" role="tablist" aria-label="Швидкий вибір точки">
-            <button type="button" role="tab" class="map-pill" data-spot-tab="0" aria-selected="false"><span>01</span> Сатанів</button>
-            <button type="button" role="tab" class="map-pill" data-spot-tab="1" aria-selected="false"><span>02</span> Товтра Сокіл</button>
-            <button type="button" role="tab" class="map-pill active" data-spot-tab="2" aria-selected="true"><span>03</span> Кам'янець</button>
-            <button type="button" role="tab" class="map-pill" data-spot-tab="3" aria-selected="false"><span>04</span> Бакота</button>
-            <button type="button" role="tab" class="map-pill" data-spot-tab="4" aria-selected="false"><span>05</span> Печера Атлантида</button>
+            <button type="button" role="tab" class="map-pill" data-spot-tab="0" aria-selected="false"><span>01</span><span class="pill-name"> Сатанів</span></button>
+            <button type="button" role="tab" class="map-pill" data-spot-tab="1" aria-selected="false"><span>02</span><span class="pill-name"> Сокіл</span></button>
+            <button type="button" role="tab" class="map-pill active" data-spot-tab="2" aria-selected="true"><span>03</span><span class="pill-name"> Кам'янець</span></button>
+            <button type="button" role="tab" class="map-pill" data-spot-tab="3" aria-selected="false"><span>04</span><span class="pill-name"> Бакота</span></button>
+            <button type="button" role="tab" class="map-pill" data-spot-tab="4" aria-selected="false"><span>05</span><span class="pill-name"> Атлантида</span></button>
           </div>
           <div class="map-carousel-hint" aria-hidden="true">
-            <span>← Гортайте картки або натискайте на мапі →</span>
+            <button type="button" class="map-hint-nav-btn" id="map-prev-btn" aria-label="Попередня локація">‹</button>
+            <span>Гортайте свайпом або обирайте точку</span>
+            <button type="button" class="map-hint-nav-btn" id="map-next-btn" aria-label="Наступна локація">›</button>
           </div>
         </div>
 
@@ -339,7 +356,10 @@
 
     <section class="comparison-section section-pad container" id="worlds">
       <div class="section-heading"><p class="eyebrow">04 / Ваша маленька експедиція</p><span class="section-note">Змінюйте епоху. Досліджуйте деталі.</span></div>
-      <div class="discovery-heading"><h2>У пейзажу є  <br><em>що розповісти.</em></h2><p>Посуньте межу між епохами.  <br>Торкніться позначок, щоб прочитати  <br>три підказки до цього краєвиду.</p></div>
+      <div class="discovery-heading">
+        <h2>У пейзажу є <em>що розповісти.</em></h2>
+        <p>Посуньте межу між епохами та торкніться позначок, щоб розкрити підказки до краєвиду.</p>
+      </div>
       <div class="discovery-workspace">
       <div class="comparison" id="comparison">
         <img src="assets/frames/desktop/frame_050.webp" srcset="assets/frames/mobile/frame_050.webp 800w, assets/frames/desktop/frame_050.webp 1280w" sizes="(max-width: 700px) 100vw, 90vw" alt="Підводна художня реконструкція того самого пейзажу." width="1280" height="720" loading="lazy">
@@ -461,11 +481,11 @@
     </section>
   </main>
   <nav class="chapter-dock" aria-label="Розділи подорожі" hidden>
-    <a href="#top" data-chapter="top"><span>01</span>Море</a>
-    <a href="#traces" data-chapter="traces"><span>02</span>Камінь</a>
-    <a href="#map" data-chapter="map"><span>03</span>Мапа</a>
-    <a href="#worlds" data-chapter="worlds"><span>04</span>Відкриття</a>
-    <a href="#visit" data-chapter="visit"><span>05</span>Наживо <span aria-hidden="true">↗</span></a>
+    <a href="#top" data-chapter="top"><span>01</span><span class="dock-label"> Море</span></a>
+    <a href="#traces" data-chapter="traces"><span>02</span><span class="dock-label"> Камінь</span></a>
+    <a href="#map" data-chapter="map"><span>03</span><span class="dock-label"> Мапа</span></a>
+    <a href="#worlds" data-chapter="worlds"><span>04</span><span class="dock-label"> Відкриття</span></a>
+    <a href="#visit" data-chapter="visit"><span>05</span><span class="dock-label"> Наживо</span></a>
   </nav>
   <footer class="footer container"><a class="brand" href="#top">ГЛИБШЕ<span class="brand-dot">.</span></a><span>Історія 01 · Море, якого немає</span><a href="#top">На поверхню <span aria-hidden="true">↑</span></a></footer>
 </body>
