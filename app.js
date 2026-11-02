@@ -1,3 +1,7 @@
+// ==========================================================================
+// ГЛИБШЕ · Преміальний рушій взаємодії та аудіо-атмосфери
+// ==========================================================================
+
 const journey = document.querySelector('.journey');
 const stage = document.querySelector('.stage');
 const visual = document.querySelector('#visual');
@@ -10,6 +14,7 @@ const sceneLabel = document.querySelector('#scene-label');
 const sceneDescription = document.querySelector('#scene-description');
 const loadingStatus = document.querySelector('#loading-status');
 const motionToggle = document.querySelector('#motion-toggle');
+const soundToggle = document.querySelector('#sound-toggle');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const variant = matchMedia('(max-width: 700px)').matches ? 'mobile' : 'desktop';
 const count = 50;
@@ -27,7 +32,10 @@ let lastCaption = -1;
 let lastPosition = null;
 
 const clamp = (n, low = 0, high = 1) => Math.max(low, Math.min(high, n));
-const smooth = (start, end, value) => { const t = clamp((value - start) / (end - start)); return t * t * (3 - 2 * t); };
+const smooth = (start, end, value) => {
+  const t = clamp((value - start) / (end - start));
+  return t * t * (3 - 2 * t);
+};
 const frameURL = index => `assets/frames/${variant}/frame_${String(index + 1).padStart(3, '0')}.webp`;
 const captions = [
   ['Крізь геологічний час', 'Змінюється світ.<br>Камінь пам’ятає.', 'Знайомий краєвид поступається місцем морському середовищу.'],
@@ -50,7 +58,7 @@ function fetchFrame(index) {
     return blob;
   }).catch(error => {
     failed.add(index);
-    loadingStatus.textContent = 'Частина кадрів недоступна. Історію можна читати нижче.';
+    loadingStatus.textContent = 'Частина кадрів завантажується. Історію можна читати нижче.';
     loadingStatus.classList.remove('complete');
     throw error;
   });
@@ -74,8 +82,7 @@ function getDecoded(index) {
       image.src = url;
       await image.decode();
       decoded.set(index, image);
-      // Keep compressed WebP blobs, but only ten decoded images in memory.
-      while (decoded.size > 10) {
+      while (decoded.size > 12) {
         const candidates = [...decoded.keys()];
         const victim = candidates.find(key => Math.abs(key - latestFrame) > 2);
         if (victim === undefined) break;
@@ -96,7 +103,7 @@ async function preload() {
   await Promise.all(Array.from({ length: 4 }, async () => {
     while (next < order.length && !motionOff) {
       const index = order[next++];
-      try { await fetchFrame(index); } catch { /* The poster and readable story remain available. */ }
+      try { await fetchFrame(index); } catch { /* Poster fallback remains */ }
     }
   }));
   preloading = false;
@@ -122,13 +129,11 @@ function paint(position) {
     context.globalAlpha = 1;
     canvas.classList.add('ready');
     canvas.dataset.frame = String(Math.round(position) + 1);
-    canvas.dataset.position = position.toFixed(2);
   } else {
     if (first || second) { drawImage(first || second); canvas.classList.add('ready'); }
     Promise.allSettled([getDecoded(lo), getDecoded(hi)]).then(results => {
       if (motionOff) return;
-      if (results.some(result => result.status === 'fulfilled') && Math.abs(latestFrame - position) < 1) {
-        // Draw the latest requested position, never a stale frame after fast scrolling.
+      if (results.some(result => result.status === 'fulfilled') && Math.abs(latestFrame - position) < 1.2) {
         const image = decoded.get(Math.floor(latestFrame)) || decoded.get(Math.min(count - 1, Math.ceil(latestFrame)));
         if (image) {
           drawImage(image);
@@ -136,13 +141,137 @@ function paint(position) {
           if (decoded.has(Math.floor(latestFrame)) && upper && latestFrame % 1) drawImage(upper, latestFrame % 1);
           context.globalAlpha = 1;
           canvas.classList.add('ready');
-          canvas.dataset.frame = String(Math.round(latestFrame) + 1);
-          canvas.dataset.position = latestFrame.toFixed(2);
         }
       }
     });
   }
 }
+
+// ==========================================================================
+// Web Audio Ambient Synthesizer (Generative Wind & Ancient Sea)
+// ==========================================================================
+
+let audioCtx = null;
+let soundPlaying = false;
+let masterGain = null;
+let windGain = null;
+let seaGain = null;
+let windFilter = null;
+let seaFilter = null;
+let noiseNode = null;
+let seaOsc1 = null;
+let seaOsc2 = null;
+
+function initAudio() {
+  if (audioCtx) return;
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  audioCtx = new AudioContext();
+
+  masterGain = audioCtx.createGain();
+  masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+  masterGain.connect(audioCtx.destination);
+
+  // 1. Wind pink-noise generator (cliff air)
+  const bufferSize = audioCtx.sampleRate * 2;
+  const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const output = noiseBuffer.getChannelData(0);
+  let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+  for (let i = 0; i < bufferSize; i++) {
+    const white = Math.random() * 2 - 1;
+    b0 = 0.99886 * b0 + white * 0.0555179;
+    b1 = 0.99332 * b1 + white * 0.0750759;
+    b2 = 0.96900 * b2 + white * 0.1538520;
+    b3 = 0.86650 * b3 + white * 0.3104856;
+    b4 = 0.55000 * b4 + white * 0.5329522;
+    b5 = -0.7616 * b5 - white * 0.0168980;
+    output[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.05;
+    b6 = white * 0.115926;
+  }
+
+  noiseNode = audioCtx.createBufferSource();
+  noiseNode.buffer = noiseBuffer;
+  noiseNode.loop = true;
+
+  windFilter = audioCtx.createBiquadFilter();
+  windFilter.type = 'bandpass';
+  windFilter.frequency.setValueAtTime(320, audioCtx.currentTime);
+  windFilter.Q.setValueAtTime(1.2, audioCtx.currentTime);
+
+  windGain = audioCtx.createGain();
+  windGain.gain.setValueAtTime(0.7, audioCtx.currentTime);
+
+  noiseNode.connect(windFilter);
+  windFilter.connect(windGain);
+  windGain.connect(masterGain);
+  noiseNode.start();
+
+  // 2. Prehistoric underwater ocean resonance
+  seaOsc1 = audioCtx.createOscillator();
+  seaOsc1.type = 'sine';
+  seaOsc1.frequency.setValueAtTime(55, audioCtx.currentTime); // A1
+
+  seaOsc2 = audioCtx.createOscillator();
+  seaOsc2.type = 'triangle';
+  seaOsc2.frequency.setValueAtTime(82.4, audioCtx.currentTime); // E2
+
+  seaFilter = audioCtx.createBiquadFilter();
+  seaFilter.type = 'lowpass';
+  seaFilter.frequency.setValueAtTime(120, audioCtx.currentTime);
+
+  seaGain = audioCtx.createGain();
+  seaGain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+
+  seaOsc1.connect(seaFilter);
+  seaOsc2.connect(seaFilter);
+  seaFilter.connect(seaGain);
+  seaGain.connect(masterGain);
+  seaOsc1.start();
+  seaOsc2.start();
+}
+
+function toggleSound() {
+  if (!soundToggle) return;
+  if (!soundPlaying) {
+    initAudio();
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+    masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+    masterGain.gain.linearRampToValueAtTime(0.5, audioCtx.currentTime + 1.2);
+    soundPlaying = true;
+    soundToggle.classList.add('playing');
+    soundToggle.setAttribute('aria-pressed', 'true');
+    soundToggle.title = 'Вимкнути атмосферний звук';
+  } else {
+    if (audioCtx && masterGain) {
+      masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+      masterGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
+      setTimeout(() => {
+        soundPlaying = false;
+        soundToggle.classList.remove('playing');
+        soundToggle.setAttribute('aria-pressed', 'false');
+        soundToggle.title = 'Увімкнути атмосферний звук';
+      }, 500);
+    }
+  }
+}
+
+if (soundToggle) {
+  soundToggle.addEventListener('click', toggleSound);
+}
+
+function updateSoundModulation(frameProgress) {
+  if (!audioCtx || !soundPlaying || !windGain || !seaGain) return;
+  const now = audioCtx.currentTime;
+  const seaRatio = clamp(frameProgress);
+  windGain.gain.setTargetAtTime(0.7 * (1 - seaRatio * 0.8), now, 0.2);
+  seaGain.gain.setTargetAtTime(0.05 + 0.65 * seaRatio, now, 0.2);
+  seaFilter.frequency.setTargetAtTime(120 + 260 * seaRatio, now, 0.2);
+}
+
+// ==========================================================================
+// Scroll Engine & Stage Sync
+// ==========================================================================
 
 function update() {
   raf = 0;
@@ -153,11 +282,15 @@ function update() {
   latestFrame = frameProgress * (count - 1);
   document.querySelector('#era-progress').style.width = `${frameProgress * 100}%`;
   document.querySelector('#era').textContent = frameProgress < .02 ? 'Сьогодні' : frameProgress > .98 ? 'Давнє море' : 'Крізь час';
+  
+  updateSoundModulation(frameProgress);
+
   const heroOpacity = 1 - smooth(.015, .145, progress);
   heroCopy.style.opacity = heroOpacity;
   heroCopy.style.transform = `translateY(${-35 * (1 - heroOpacity)}px)`;
   heroCopy.style.pointerEvents = heroOpacity < .01 ? 'none' : 'auto';
   document.querySelector('.journey-start').tabIndex = heroOpacity < .01 ? -1 : 0;
+  
   const caption = progress < .42 ? 0 : progress < .67 ? 1 : 2;
   if (caption !== lastCaption) {
     [sceneLabel.textContent, sceneTitle.innerHTML, sceneDescription.textContent] = captions[caption];
@@ -215,18 +348,25 @@ document.querySelector('.journey-start').addEventListener('click', event => {
     window.scrollTo({ top: journey.offsetTop + (journey.offsetHeight - stage.offsetHeight) * .28, behavior: 'smooth' });
   }
 });
+
 const comparison = document.querySelector('#comparison');
 const comparisonRange = document.querySelector('#comparison-range');
-comparisonRange.addEventListener('input', () => {
-  comparison.style.setProperty('--split', `${comparisonRange.value}%`);
-  comparisonRange.setAttribute('aria-valuetext', `${comparisonRange.value}% сучасного пейзажу`);
-});
+if (comparisonRange && comparison) {
+  comparisonRange.addEventListener('input', () => {
+    comparison.style.setProperty('--split', `${comparisonRange.value}%`);
+    comparisonRange.setAttribute('aria-valuetext', `${comparisonRange.value}% сучасного пейзажу`);
+  });
+}
+
 window.addEventListener('scroll', schedule, { passive: true });
 window.addEventListener('pageshow', schedule);
 new ResizeObserver(resize).observe(visual);
 setMotion(motionOff);
 
-// Read the landscape: independent of animation, available in static mode too.
+// ==========================================================================
+// Landmarks Explorer (Section 04)
+// ==========================================================================
+
 const landmarkContent = [
   ['Прочитати рельєф', 'Пагорби, які починалися під водою.', 'Товтри зберігають обриси давніх рифових споруд. На справжній місцевості придивіться, як скелясті пасма піднімаються над навколишнім ландшафтом.'],
   ['Роздивитися породу', 'Камінь із морською біографією.', 'Рифові масиви Товтр складені вапняками. На доступних природних відслоненнях спостерігайте за фактурою породи — не відколюючи й не забираючи її із собою.'],
@@ -242,28 +382,203 @@ for (const button of landmarkButtons) {
     document.querySelector('#landmark-title').textContent = landmarkContent[index][1];
     document.querySelector('#landmark-description').textContent = landmarkContent[index][2];
     const panel = document.querySelector('#landmark-panel');
-    if (panel.getBoundingClientRect().bottom > window.innerHeight - 80) {
+    if (panel && panel.getBoundingClientRect().bottom > window.innerHeight - 80) {
       panel.scrollIntoView({ block: 'nearest', behavior: reducedMotion.matches ? 'auto' : 'smooth' });
     }
   });
 }
 
-// A compact table of contents appears once visitors enter the story.
+// ==========================================================================
+// Interactive Reef Map Component
+// ==========================================================================
+
+const mapPinsData = [
+  {
+    num: '01',
+    title: "Нігинські товтри",
+    tag: "Скелясті пасма & Печери",
+    coords: "48.783° N, 26.545° E",
+    alt: "~290 м",
+    age: "14–16 млн років",
+    desc: "Стрімкі поодинокі вапнякові скелі біля сіл Нігин та Сахкамінь. Тут розташовані відомі Нігинські печери у товтрових масивах, де можна вивчати пористість вапняку та сліди карсту.",
+    feature: "Пористість біогермного вапняку, форми карстових порожнин, обривисті схили",
+    link: "https://maps.google.com/?q=48.783,26.545"
+  },
+  {
+    num: '02',
+    title: "Смотрицький каньйон",
+    tag: "Каньйон & Скелі",
+    coords: "48.673° N, 26.568° E",
+    alt: "~210 м",
+    age: "14–420 млн років",
+    desc: "Природний розріз давнього морського дна. Сорокаметрові прямовисні вапнякові стінки в центрі Кам'янця-Подільського відкривають зріз силурійських та міоценових відкладів.",
+    feature: "Вертикальні тріщини, мохуваткові масиви, шаруватість порід над річкою",
+    link: "https://maps.google.com/?q=48.673,26.568"
+  },
+  {
+    num: '03',
+    title: "Вербецькі товтри (Чотири Кавалери)",
+    tag: "Ізольовані рифи",
+    coords: "48.665° N, 26.685° E",
+    alt: "~315 м",
+    age: "14–15 млн років",
+    desc: "Група виразних конусоподібних пагорбів, що піднімаються над навколишньою рівниною на 60 метрів. Наочний приклад окремих підводних рифових банок, що не зазнали змиву водою.",
+    feature: "Характерний конічний силует рифу, трав'яні схили, відкриті кам'янисті вершини",
+    link: "https://maps.google.com/?q=48.665,26.685"
+  },
+  {
+    num: '04',
+    title: "Китайгородське відслонення",
+    tag: "Геологічний еталон ЮНЕСКО",
+    coords: "48.647° N, 26.792° E",
+    alt: "~240 м",
+    age: "14–430 млн років",
+    desc: "Один із найвизначніших геологічних розрізів Європи біля річки Тернава. Тут на площі 60 гектарів повністю відкривається перехід від найдавніших силурійських шарів до міоценових вапняків.",
+    feature: "Еталонний геологічний розріз, багаті відклади брахіопод, коралів та мохуваток",
+    link: "https://maps.google.com/?q=48.647,26.792"
+  },
+  {
+    num: '05',
+    title: "Бакота & Дністровський каньйон",
+    tag: "Затоплений каньйон",
+    coords: "48.583° N, 26.996° E",
+    alt: "~150 м",
+    age: "14–15 млн років",
+    desc: "Велична Біла скеля та затока на місці стародавньої річкової долини. Білі стіни відслонень височіють над водою, показуючи масштаб колишньої підводної бар'єрної системи перед відступом моря.",
+    feature: "Потужні відслонення білих вапняків, мікроклімат Дністровського водосховища",
+    link: "https://maps.google.com/?q=48.583,26.996"
+  }
+];
+
+function initReefMap() {
+  const pins = document.querySelectorAll('.map-pin');
+  const numEl = document.querySelector('#map-detail-num');
+  const titleEl = document.querySelector('#map-detail-title');
+  const tagEl = document.querySelector('#map-detail-tag');
+  const coordsEl = document.querySelector('#map-detail-coords');
+  const altEl = document.querySelector('#map-detail-alt');
+  const ageEl = document.querySelector('#map-detail-age');
+  const descEl = document.querySelector('#map-detail-desc');
+  const featureEl = document.querySelector('#map-detail-feature');
+  const linkEl = document.querySelector('#map-detail-link');
+
+  function selectPin(index) {
+    const data = mapPinsData[index];
+    if (!data) return;
+    pins.forEach((pin, i) => pin.classList.toggle('active', i === index));
+    if (numEl) numEl.textContent = data.num;
+    if (titleEl) titleEl.textContent = data.title;
+    if (tagEl) tagEl.textContent = data.tag;
+    if (coordsEl) coordsEl.textContent = data.coords;
+    if (altEl) altEl.textContent = data.alt;
+    if (ageEl) ageEl.textContent = data.age;
+    if (descEl) descEl.textContent = data.desc;
+    if (featureEl) featureEl.textContent = data.feature;
+    if (linkEl) linkEl.href = data.link;
+  }
+
+  pins.forEach((pin, index) => {
+    pin.addEventListener('click', () => selectPin(index));
+    pin.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        selectPin(index);
+      }
+    });
+  });
+
+  const modeToday = document.querySelector('#map-mode-today');
+  const modeSea = document.querySelector('#map-mode-sea');
+  const seaLayer = document.querySelector('#ancient-sea-layer');
+  const eraBadge = document.querySelector('#map-era-badge');
+  const reefCore = document.querySelector('#reef-ridge-core');
+
+  if (modeToday && modeSea) {
+    modeToday.addEventListener('click', () => {
+      modeToday.classList.add('active');
+      modeToday.setAttribute('aria-pressed', 'true');
+      modeSea.classList.remove('active');
+      modeSea.setAttribute('aria-pressed', 'false');
+      if (seaLayer) seaLayer.style.opacity = '0';
+      if (eraBadge) eraBadge.textContent = 'Сучасний рельєф Поділля';
+      if (reefCore) reefCore.removeAttribute('filter');
+    });
+
+    modeSea.addEventListener('click', () => {
+      modeSea.classList.add('active');
+      modeSea.setAttribute('aria-pressed', 'true');
+      modeToday.classList.remove('active');
+      modeToday.setAttribute('aria-pressed', 'false');
+      if (seaLayer) seaLayer.style.opacity = '1';
+      if (eraBadge) eraBadge.textContent = 'Міоценове море (14 млн років тому)';
+      if (reefCore) reefCore.setAttribute('filter', 'url(#glow)');
+    });
+  }
+}
+
+initReefMap();
+
+// ==========================================================================
+// Field Card Modal & Print
+// ==========================================================================
+
+function initFieldModal() {
+  const fieldModal = document.querySelector('#field-modal');
+  const openFieldBtn = document.querySelector('#open-field-card');
+  const cardPreviewWidget = document.querySelector('#card-preview-widget');
+  const closeFieldBtn = document.querySelector('#close-field-btn');
+  const printFieldBtn = document.querySelector('#print-field-btn');
+
+  if (openFieldBtn && fieldModal) {
+    openFieldBtn.addEventListener('click', () => fieldModal.showModal());
+  }
+  if (cardPreviewWidget && fieldModal) {
+    cardPreviewWidget.addEventListener('click', () => fieldModal.showModal());
+    cardPreviewWidget.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        fieldModal.showModal();
+      }
+    });
+  }
+  if (closeFieldBtn && fieldModal) {
+    closeFieldBtn.addEventListener('click', () => fieldModal.close());
+  }
+  if (printFieldBtn) {
+    printFieldBtn.addEventListener('click', () => window.print());
+  }
+  if (fieldModal) {
+    fieldModal.addEventListener('click', (e) => {
+      if (e.target === fieldModal) fieldModal.close();
+    });
+  }
+}
+
+initFieldModal();
+
+// ==========================================================================
+// Floating Navigation Dock
+// ==========================================================================
+
 const dock = document.querySelector('.chapter-dock');
 const chapterLinks = [...dock.querySelectorAll('[data-chapter]')];
 const chapterSections = chapterLinks.map(link => document.getElementById(link.dataset.chapter));
 let dockFrame = 0;
+
 function updateDock() {
   dockFrame = 0;
   const mobileJourneyVisible = matchMedia('(max-width: 700px), (max-width: 1000px) and (max-height: 500px)').matches && journey.getBoundingClientRect().bottom > window.innerHeight * .5;
   dock.hidden = mobileJourneyVisible || window.scrollY < window.innerHeight * .65 || document.querySelector('#about').getBoundingClientRect().top < window.innerHeight * .6;
   let active = 0;
-  chapterSections.forEach((section, index) => { if (section.getBoundingClientRect().top < window.innerHeight * .5) active = index; });
+  chapterSections.forEach((section, index) => {
+    if (section && section.getBoundingClientRect().top < window.innerHeight * .5) active = index;
+  });
   chapterLinks.forEach((link, index) => {
     if (index === active) link.setAttribute('aria-current', 'location');
     else link.removeAttribute('aria-current');
   });
 }
+
 function scheduleDock() { if (!dockFrame) dockFrame = requestAnimationFrame(updateDock); }
 window.addEventListener('scroll', scheduleDock, { passive: true });
 window.addEventListener('resize', scheduleDock);
@@ -271,7 +586,10 @@ window.addEventListener('pageshow', scheduleDock);
 motionToggle.addEventListener('click', scheduleDock);
 updateDock();
 
-// Atlas of user-provided replacement images. Do not carry over original Commons attribution.
+// ==========================================================================
+// Atlas of Documentary & Project Images (Section 02)
+// ==========================================================================
+
 const traceItems = [
   {
     "id": "fossils",
@@ -325,6 +643,7 @@ const traceItems = [
     "height": 726
   }
 ];
+
 const traceTabs = [...document.querySelectorAll('[data-trace]')];
 const tracePanel = document.querySelector('#trace-panel');
 const tracePhoto = document.querySelector('#trace-photo');
@@ -333,6 +652,7 @@ let activeTrace = 0;
 let traceRequest = 0;
 const traceRevision = '89ac053b4b';
 const tracePath = (item, width) => `assets/traces/${item.id}-${width}.webp?v=${traceRevision}`;
+
 async function selectTrace(index) {
   if (index === activeTrace && !tracePanel.hasAttribute('aria-busy')) return;
   const request = ++traceRequest;
@@ -350,47 +670,64 @@ async function selectTrace(index) {
     tracePhoto.alt = item.alt;
     tracePhoto.width = item.width;
     tracePhoto.height = item.height;
-    for (const key of ['location','author','kicker','title','description','observation','provenance']) document.querySelector(`#trace-${key}`).textContent = item[key];
-    document.querySelector('#trace-source').removeAttribute('href');
-    document.querySelector('#trace-license').removeAttribute('href');
-    document.querySelector('#trace-license').textContent = ''; document.querySelector('#trace-license').hidden = true;
+    for (const key of ['location','author','kicker','title','description','observation','provenance']) {
+      const el = document.querySelector(`#trace-${key}`);
+      if (el) el.textContent = item[key];
+    }
+    const traceSource = document.querySelector('#trace-source');
+    if (traceSource) traceSource.removeAttribute('href');
+    const traceLicense = document.querySelector('#trace-license');
+    if (traceLicense) {
+      traceLicense.removeAttribute('href');
+      traceLicense.textContent = '';
+      traceLicense.hidden = true;
+    }
     document.querySelector('#trace-index').textContent = String(index+1).padStart(2,'0');
     document.querySelector('#trace-counter').textContent = `${String(index+1).padStart(2,'0')} / 03`;
-    traceTabs.forEach((tab,i) => { tab.setAttribute('aria-selected',String(i===index)); tab.tabIndex=i===index?0:-1; });
-    tracePanel.setAttribute('aria-labelledby',traceTabs[index].id);
+    traceTabs.forEach((tab,i) => {
+      tab.setAttribute('aria-selected', String(i === index));
+      tab.tabIndex = i === index ? 0 : -1;
+    });
+    tracePanel.setAttribute('aria-labelledby', traceTabs[index].id);
     activeTrace = index;
     traceStatus.textContent = '';
     const panelTop = tracePanel.getBoundingClientRect().top;
     if (panelTop < 100 || panelTop > window.innerHeight * .45) {
-      tracePanel.scrollIntoView({ block:'start', behavior:reducedMotion.matches?'auto':'smooth' });
+      tracePanel.scrollIntoView({ block:'start', behavior: reducedMotion.matches ? 'auto' : 'smooth' });
     }
   } catch {
     if (request === traceRequest) traceStatus.textContent = 'Фото не завантажилося. Спробуйте обрати його ще раз.';
-  } finally { if(request===traceRequest) tracePanel.removeAttribute('aria-busy'); }
+  } finally {
+    if (request === traceRequest) tracePanel.removeAttribute('aria-busy');
+  }
 }
-traceTabs.forEach((tab,index) => {
-  tab.addEventListener('click',()=>selectTrace(index));
-  tab.addEventListener('keydown',event=>{
+
+traceTabs.forEach((tab, index) => {
+  tab.addEventListener('click', () => selectTrace(index));
+  tab.addEventListener('keydown', event => {
     let next;
-    if (event.key==='ArrowRight') next=(index+1)%traceTabs.length;
-    if (event.key==='ArrowLeft') next=(index+traceTabs.length-1)%traceTabs.length;
-    if (event.key==='Home') next=0;
-    if (event.key==='End') next=traceTabs.length-1;
-    if (next===undefined) return;
-    event.preventDefault(); traceTabs[next].focus(); selectTrace(next);
+    if (event.key === 'ArrowRight') next = (index + 1) % traceTabs.length;
+    if (event.key === 'ArrowLeft') next = (index + traceTabs.length - 1) % traceTabs.length;
+    if (event.key === 'Home') next = 0;
+    if (event.key === 'End') next = traceTabs.length - 1;
+    if (next === undefined) return;
+    event.preventDefault();
+    traceTabs[next].focus();
+    selectTrace(next);
   });
 });
+
 const traceDialog = document.querySelector('#trace-dialog');
 let originalOverflow = '';
-document.querySelector('#trace-zoom').addEventListener('click',()=>{
-  const item=traceItems[activeTrace];
-  document.querySelector('#trace-dialog-image').src=tracePath(item,1600);
-  document.querySelector('#trace-dialog-image').alt=item.alt;
-  document.querySelector('#trace-dialog-caption').textContent=`${item.location}. Матеріали надані для проєкту. Підготовка: масштабування та WebP.`;
-  originalOverflow=document.body.style.overflow;
-  document.body.style.overflow='hidden';
+document.querySelector('#trace-zoom').addEventListener('click', () => {
+  const item = traceItems[activeTrace];
+  document.querySelector('#trace-dialog-image').src = tracePath(item, 1600);
+  document.querySelector('#trace-dialog-image').alt = item.alt;
+  document.querySelector('#trace-dialog-caption').textContent = `${item.location}. Матеріали надані для проєкту. Підготовка: масштабування та WebP.`;
+  originalOverflow = document.body.style.overflow;
+  document.body.style.overflow = 'hidden';
   traceDialog.showModal();
 });
-document.querySelector('#trace-dialog-close').addEventListener('click',()=>traceDialog.close());
-traceDialog.addEventListener('click',event=>{if(event.target===traceDialog)traceDialog.close();});
-traceDialog.addEventListener('close',()=>{document.body.style.overflow=originalOverflow;});
+document.querySelector('#trace-dialog-close').addEventListener('click', () => traceDialog.close());
+traceDialog.addEventListener('click', event => { if (event.target === traceDialog) traceDialog.close(); });
+traceDialog.addEventListener('close', () => { document.body.style.overflow = originalOverflow; });

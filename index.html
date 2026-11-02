@@ -7,6 +7,9 @@
   <meta name="description" content="Море, якого немає. Інтерактивна подорож у геологічне минуле Подільських Товтр — від сучасного пейзажу до давнього моря.">
   <title>Море, якого немає — ГЛИБШЕ</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="assets/frames/mobile/frame_001.webp" media="(max-width: 700px)">
   <link rel="preload" as="image" href="assets/frames/desktop/frame_001.webp" media="(min-width: 701px)">
   <link rel="stylesheet" href="styles.css">
@@ -19,8 +22,26 @@
       <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 8h26M6 14h20M9 20h14M13 26h6"/></svg>
       <span>ГЛИБШЕ<span class="brand-dot">.</span></span>
     </a>
-    <nav aria-label="Головна навігація"><a href="#origin">Історія</a><a href="#visit">Побачити наживо <span aria-hidden="true">↗</span></a><a href="#about">Про проєкт</a></nav>
-    <button class="motion-toggle" id="motion-toggle" type="button" aria-pressed="false"><span class="motion-icon" aria-hidden="true">Ⅱ</span><span class="motion-label">Зупинити рух</span></button>
+    <nav aria-label="Головна навігація">
+      <a href="#origin">Історія</a>
+      <a href="#traces">Сліди</a>
+      <a href="#map">Мапа рифу</a>
+      <a href="#worlds">Відкриття</a>
+      <a href="#visit">Експедиція <span aria-hidden="true">↗</span></a>
+      <a href="#about">Про проєкт</a>
+    </nav>
+    <div class="header-controls">
+      <button class="sound-toggle" id="sound-toggle" type="button" aria-pressed="false" title="Увімкнути атмосферний звук" aria-label="Увімкнути атмосферний звук">
+        <span class="sound-bars" aria-hidden="true">
+          <i></i><i></i><i></i><i></i>
+        </span>
+        <span class="sound-label">Звук</span>
+      </button>
+      <button class="motion-toggle" id="motion-toggle" type="button" aria-pressed="false">
+        <span class="motion-icon" aria-hidden="true">Ⅱ</span>
+        <span class="motion-label">Зупинити рух</span>
+      </button>
+    </div>
   </header>
 
   <main>
@@ -85,9 +106,161 @@
     </section>
     <dialog class="trace-dialog" id="trace-dialog" aria-label="Зображення у великому розмірі"><button type="button" id="trace-dialog-close" class="trace-dialog-close" aria-label="Закрити збільшене фото">Закрити <span aria-hidden="true">×</span></button><figure><img id="trace-dialog-image" alt=""><figcaption id="trace-dialog-caption"></figcaption></figure></dialog>
 
+    <section class="reef-map-section section-pad container" id="map">
+      <div class="section-heading">
+        <p class="eyebrow">02.5 / Географія рифу</p>
+        <span class="section-note">Жива мапа Поділля · 200 км бар'єру</span>
+      </div>
+      <div class="map-intro">
+        <h2>Єдиний у світі  <br><em>береговий риф на суші.</em></h2>
+        <div class="map-intro-text">
+          <p>Товтри простягаються дугою на 200 кілометрів через Поділля до Молдови. Це не тектонічні гори, а біологічна споруда, побудована колоніями вапнякових організмів уздовж берегової лінії міоценового моря.</p>
+          <div class="map-mode-switch" role="group" aria-label="Режим відображення мапи">
+            <button type="button" class="map-mode-btn active" id="map-mode-today" aria-pressed="true">Сучасний рельєф</button>
+            <button type="button" class="map-mode-btn" id="map-mode-sea" aria-pressed="false">Міоценове море (14 млн років)</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="map-workspace">
+        <div class="map-canvas-card">
+          <div class="map-badge" id="map-era-badge">Сучасний рельєф Поділля</div>
+          <svg class="reef-svg-map" id="reef-svg" viewBox="0 0 800 520" preserveAspectRatio="xMidYMid meet" aria-label="Інтерактивна схема Подільських Товтр">
+            <defs>
+              <linearGradient id="seaGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#192a24" stop-opacity="0.85"/>
+                <stop offset="100%" stop-color="#14211d" stop-opacity="0.95"/>
+              </linearGradient>
+              <linearGradient id="ridgeGrad" x1="0" y1="0" x2="0.8" y2="1">
+                <stop offset="0%" stop-color="#dfc293"/>
+                <stop offset="50%" stop-color="#b8935c"/>
+                <stop offset="100%" stop-color="#8a6738"/>
+              </linearGradient>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+
+            <!-- Prehistoric Sea Overlay (active in sea mode) -->
+            <path class="ancient-sea-layer" id="ancient-sea-layer" d="M 0,0 L 800,0 L 800,260 Q 640,240 500,290 T 260,390 Q 140,430 0,460 Z" fill="url(#seaGrad)" opacity="0"/>
+
+            <!-- Topo Grid & Contour Curves -->
+            <g class="map-contours" stroke="currentColor" fill="none" opacity="0.14">
+              <path d="M 60,60 Q 300,100 740,70"/>
+              <path d="M 40,160 Q 380,180 760,150"/>
+              <path d="M 50,270 Q 420,290 750,260"/>
+              <path d="M 40,390 Q 430,370 760,400"/>
+              <line x1="120" y1="30" x2="120" y2="490" stroke-dasharray="3,6"/>
+              <line x1="320" y1="30" x2="320" y2="490" stroke-dasharray="3,6"/>
+              <line x1="520" y1="30" x2="520" y2="490" stroke-dasharray="3,6"/>
+              <line x1="720" y1="30" x2="720" y2="490" stroke-dasharray="3,6"/>
+            </g>
+
+            <!-- River Dniester and tributaries -->
+            <g class="river-system" fill="none" stroke="#607d75" stroke-linecap="round">
+              <!-- Smotrych River -->
+              <path class="river smotrych" d="M 380,50 Q 375,150 400,230 T 435,340 T 470,430" stroke-width="2.2" opacity="0.6"/>
+              <!-- Dniester River Canyon (lower boundary) -->
+              <path class="river dniester" d="M 80,480 Q 220,440 360,455 T 510,435 T 670,460 T 780,440" stroke-width="4" opacity="0.8"/>
+            </g>
+            <text x="700" y="430" class="river-label" fill="#88a89f">р. Дністер</text>
+            <text x="445" y="270" class="river-label" fill="#88a89f">р. Смотрич</text>
+
+            <!-- Main Barrier Reef Ridge Line (Arc) -->
+            <path class="reef-ridge-back" d="M 110,80 Q 260,130 380,210 T 540,320 T 710,410" fill="none" stroke="#d4af72" stroke-width="12" opacity="0.25" stroke-linecap="round"/>
+            <path class="reef-ridge-core" id="reef-ridge-core" d="M 110,80 Q 260,130 380,210 T 540,320 T 710,410" fill="none" stroke="url(#ridgeGrad)" stroke-width="4.5" stroke-linecap="round"/>
+
+            <text x="125" y="70" class="map-ridge-label" fill="#d4af72">БАР'ЄРНИЙ РИФ ТОВТР (200 км)</text>
+
+            <!-- Real Geological Landmarks Pins -->
+            <g class="map-pins" id="map-pins">
+              <!-- 0: Nihyn -->
+              <g class="map-pin" data-pin="0" tabindex="0" role="button" aria-label="Нігинські товтри">
+                <circle cx="360" cy="190" r="16" class="pin-pulse"/>
+                <circle cx="360" cy="190" r="7" class="pin-core"/>
+                <text x="375" y="195" class="pin-title">Нігинські товтри</text>
+              </g>
+
+              <!-- 1: Smotrych Canyon / Kamianets -->
+              <g class="map-pin active" data-pin="1" tabindex="0" role="button" aria-label="Смотрицький каньйон">
+                <circle cx="435" cy="285" r="18" class="pin-pulse"/>
+                <circle cx="435" cy="285" r="8" class="pin-core"/>
+                <text x="452" y="290" class="pin-title">Смотрицький каньйон</text>
+              </g>
+
+              <!-- 2: Verbka (Four Knights) -->
+              <g class="map-pin" data-pin="2" tabindex="0" role="button" aria-label="Вербецькі товтри">
+                <circle cx="475" cy="310" r="16" class="pin-pulse"/>
+                <circle cx="475" cy="310" r="7" class="pin-core"/>
+                <text x="492" y="315" class="pin-title">Вербецькі товтри</text>
+              </g>
+
+              <!-- 3: Kitayhorod Outcrop -->
+              <g class="map-pin" data-pin="3" tabindex="0" role="button" aria-label="Китайгородське відслонення">
+                <circle cx="560" cy="355" r="16" class="pin-pulse"/>
+                <circle cx="560" cy="355" r="7" class="pin-core"/>
+                <text x="578" y="360" class="pin-title">Китайгородське відслонення</text>
+              </g>
+
+              <!-- 4: Bakota Bay -->
+              <g class="map-pin" data-pin="4" tabindex="0" role="button" aria-label="Бакота & Дністровський каньйон">
+                <circle cx="645" cy="425" r="18" class="pin-pulse"/>
+                <circle cx="645" cy="425" r="8" class="pin-core"/>
+                <text x="540" y="445" class="pin-title">Бакота & Затока</text>
+              </g>
+            </g>
+
+            <!-- Scale bar -->
+            <g class="map-scale" transform="translate(45, 470)">
+              <line x1="0" y1="0" x2="80" y2="0" stroke="currentColor" stroke-width="2"/>
+              <line x1="0" y1="-4" x2="0" y2="4" stroke="currentColor" stroke-width="2"/>
+              <line x1="80" y1="-4" x2="80" y2="4" stroke="currentColor" stroke-width="2"/>
+              <text x="25" y="-8" class="scale-text" fill="currentColor">25 км</text>
+            </g>
+          </svg>
+          <div class="map-hint">Натисніть на позначку, щоб роздивитися точку дослідження</div>
+        </div>
+
+        <aside class="map-card" id="map-detail-card" aria-live="polite">
+          <div class="map-card-head">
+            <span class="map-card-index" id="map-detail-num">02</span>
+            <div class="map-card-tags">
+              <span class="map-tag" id="map-detail-tag">Каньйон & Скелі</span>
+              <span class="map-coord" id="map-detail-coords">48.673° N, 26.568° E</span>
+            </div>
+          </div>
+          <h3 class="map-card-title" id="map-detail-title">Смотрицький каньйон</h3>
+          <p class="map-card-desc" id="map-detail-desc">Природний розріз давнього морського дна. Сорокаметрові прямовисні вапнякові стінки в центрі Кам'янця-Подільського відкривають зріз силурійських та міоценових відкладів.</p>
+          <dl class="map-card-specs">
+            <div>
+              <dt>Висота над рівнем моря</dt>
+              <dd id="map-detail-alt">~210 м</dd>
+            </div>
+            <div>
+              <dt>Геологічний вік</dt>
+              <dd id="map-detail-age">14–420 млн років</dd>
+            </div>
+            <div>
+              <dt>Що шукати досліднику</dt>
+              <dd id="map-detail-feature">Вертикальні тріщини, мохуваткові масиви, відшарування вапняку</dd>
+            </div>
+          </dl>
+          <div class="map-card-actions">
+            <a class="map-route-btn" id="map-detail-link" href="https://maps.google.com/?q=48.673,26.568" target="_blank" rel="noopener noreferrer">
+              <span>Прокласти маршрут</span>
+              <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </aside>
+      </div>
+    </section>
 
     <section class="comparison-section section-pad container" id="worlds">
-      <div class="section-heading"><p class="eyebrow">03 / Ваша маленька експедиція</p><span class="section-note">Змінюйте епоху. Досліджуйте деталі.</span></div>
+      <div class="section-heading"><p class="eyebrow">04 / Ваша маленька експедиція</p><span class="section-note">Змінюйте епоху. Досліджуйте деталі.</span></div>
       <div class="discovery-heading"><h2>У пейзажу є  <br><em>що розповісти.</em></h2><p>Посуньте межу між епохами.  <br>Торкніться позначок, щоб прочитати  <br>три підказки до цього краєвиду.</p></div>
       <div class="discovery-workspace">
       <div class="comparison" id="comparison">
@@ -112,13 +285,97 @@
 
     <section class="visit expedition" id="visit">
       <div class="visit-image"><img src="assets/visit/sunrise-1600.webp" srcset="assets/visit/sunrise-800.webp 800w, assets/visit/sunrise-1600.webp 1600w" sizes="100vw" width="1600" height="898" loading="lazy" alt="Художня візуалізація золотого світанку над широкою долиною річки та її вигином."></div>
-      <div class="expedition-top"><p class="eyebrow">04 / Повернутися в сьогодні</p><span>ПОДІЛЛЯ · УКРАЇНА</span></div>
+      <div class="expedition-top"><p class="eyebrow">05 / Повернутися в сьогодні</p><span>ПОДІЛЛЯ · УКРАЇНА</span></div>
       <div class="expedition-content">
-        <div class="visit-copy"><span class="expedition-kicker">Від екрана — до відкриття</span><h2>Побачте це  <br><em>на власні очі.</em></h2><p>Тепер у цього краєвиду є історія.  <br>Візьміть із собою три підказки —  <br>і погляньте на Товтри по-новому.</p><a class="button-link field-download" href="assets/field-notes.html" download="Hlybshe-Podilski-Tovtry.html">Зберегти картку дослідника <span aria-hidden="true">↓</span></a><span class="visit-footnote">Безкоштовно · відкривається без інтернету · можна роздрукувати</span><a class="expedition-plan" href="https://www.npptovtry.org.ua/" target="_blank" rel="noopener noreferrer">Планувати відвідування <span aria-hidden="true">↗</span></a></div>
-        <aside class="field-preview" aria-label="Що містить картка дослідника"><div class="field-preview-top"><span class="eyebrow">Польові нотатки / 01</span><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 8h26M6 14h20M9 20h14M13 26h6"/></svg></div><p class="field-preview-intro">Не просто дивитися.  <br><em>Помічати.</em></p><ol><li><span>01</span><div><strong>Прочитайте рельєф</strong><p>Де скелясті пасма вирізняються серед пагорбів?</p></div></li><li><span>02</span><div><strong>Роздивіться камінь</strong><p>Яку фактуру має вапняк у природних відслоненнях?</p></div></li><li><span>03</span><div><strong>Знайдіть сліди життя</strong><p>Чи помітні черепашки або їхні відбитки?</p></div></li></ol><div class="field-preview-bottom"><span>ГЛИБШЕ.</span><span>Море, якого немає</span></div></aside>
+        <div class="visit-copy">
+          <span class="expedition-kicker">Від екрана — до відкриття</span>
+          <h2>Побачте це  <br><em>на власні очі.</em></h2>
+          <p>Тепер у цього краєвиду є історія.  <br>Візьміть із собою три підказки —  <br>і погляньте на Товтри по-новому.</p>
+          <div class="expedition-actions">
+            <button type="button" class="button-link field-open-btn" id="open-field-card">
+              <span>Відкрити картку дослідника</span>
+              <span aria-hidden="true">↗</span>
+            </button>
+            <a class="button-link button-ghost field-download" href="assets/field-notes.html" download="Hlybshe-Podilski-Tovtry.html">
+              <span>Зберегти офлайн HTML</span>
+              <span aria-hidden="true">↓</span>
+            </a>
+          </div>
+          <span class="visit-footnote">Безкоштовно · відкривається без інтернету · версія для друку та PDF</span>
+          <div class="expedition-extra-links">
+            <a class="expedition-plan" href="https://www.npptovtry.org.ua/" target="_blank" rel="noopener noreferrer">НПП «Подільські Товтри» <span aria-hidden="true">↗</span></a>
+            <a class="expedition-plan" href="#map">Переглянути мапу <span aria-hidden="true">↑</span></a>
+          </div>
+        </div>
+        <aside class="field-preview" aria-label="Що містить картка дослідника" id="card-preview-widget" role="button" tabindex="0">
+          <div class="field-preview-top"><span class="eyebrow">Польові нотатки / 01</span><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 8h26M6 14h20M9 20h14M13 26h6"/></svg></div>
+          <p class="field-preview-intro">Не просто дивитися.  <br><em>Помічати.</em></p>
+          <ol>
+            <li><span>01</span><div><strong>Прочитайте рельєф</strong><p>Де скелясті пасма вирізняються серед пагорбів?</p></div></li>
+            <li><span>02</span><div><strong>Роздивіться камінь</strong><p>Яку фактуру має вапняк у природних відслоненнях?</p></div></li>
+            <li><span>03</span><div><strong>Знайдіть сліди життя</strong><p>Чи помітні черепашки або їхні відбитки?</p></div></li>
+          </ol>
+          <div class="field-preview-bottom"><span>ГЛИБШЕ.</span><span>Натисніть для перегляду</span></div>
+        </aside>
       </div>
       <div class="expedition-bottom"><span>Пейзаж — художня візуалізація</span><p>Перед поїздкою уточніть доступність локації та правила парку. Спостерігайте, не пошкоджуючи породи й не збираючи скам’янілостей.</p></div>
     </section>
+
+    <!-- Field Card Printable / In-page Modal -->
+    <dialog class="field-modal" id="field-modal" aria-label="Польова картка дослідника">
+      <div class="field-modal-bar">
+        <span class="field-modal-title">Картка дослідника · Подільські Товтри</span>
+        <div class="field-modal-buttons">
+          <button type="button" class="btn-print" id="print-field-btn">
+            <span aria-hidden="true">⎙</span> Друк / Зберегти PDF
+          </button>
+          <button type="button" class="field-modal-close" id="close-field-btn" aria-label="Закрити картку">
+            Закрити <span aria-hidden="true">×</span>
+          </button>
+        </div>
+      </div>
+      <div class="field-modal-sheet">
+        <header class="sheet-head">
+          <span class="brand">ГЛИБШЕ<span class="brand-dot">.</span></span>
+          <span class="tag">Польові нотатки / 01<br>Поділля, Україна</span>
+        </header>
+        <p class="sheet-eyebrow">Експедиційний гід · Море, якого немає</p>
+        <h2 class="sheet-title">Не просто дивитися.<br><em>Помічати.</em></h2>
+        <p class="sheet-intro">Три спостережні завдання для подорожі Товтрами. Збережіть цю сторінку у PDF або роздрукуйте для польових нотаток.</p>
+        
+        <div class="sheet-tasks">
+          <div class="sheet-task">
+            <span class="task-num">01</span>
+            <div>
+              <h3>Прочитайте рельєф</h3>
+              <p>Знайдіть точку огляду, де скелясті пасма височіють над рівниною. Порівняйте пологі хвилясті поля зі стрімкими гребенями вапнякових рифів. Зверніть увагу на напрямок пасма з північного заходу на південний схід.</p>
+              <div class="sheet-lines" aria-hidden="true"><span>Мої спостереження:</span><div class="sheet-line"></div><div class="sheet-line"></div></div>
+            </div>
+          </div>
+          <div class="sheet-task">
+            <span class="task-num">02</span>
+            <div>
+              <h3>Роздивіться камінь</h3>
+              <p>На безпечних відслоненнях зверніть увагу на фактуру вапняку. Чи видно шаруватість породи? Чи помітні сліди вивітрювання та вертикальні розколини? Пам'ятайте: не відбивайте каміння молотками.</p>
+              <div class="sheet-lines" aria-hidden="true"><span>Фактура та колір:</span><div class="sheet-line"></div><div class="sheet-line"></div></div>
+            </div>
+          </div>
+          <div class="sheet-task">
+            <span class="task-num">03</span>
+            <div>
+              <h3>Знайдіть сліди життя давнього моря</h3>
+              <p>Придивіться до уламків вапняку під ногами: шукайте відбитки або рештки мохуваток (сітчасті візерунки), спіральні мушлі черевоногих молюсків та стулки давніх черепашок міоцену.</p>
+              <div class="sheet-lines" aria-hidden="true"><span>Знайдені форми:</span><div class="sheet-line"></div><div class="sheet-line"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sheet-footer">
+          <p>Джерела: НПП «Подільські Товтри» · npptovtry.org.ua</p>
+          <p>© Проєкт «ГЛИБШЕ». Спостерігайте дбайливо.</p>
+        </div>
+      </div>
+    </dialog>
 
     <section class="about section-pad container" id="about">
       <div><p class="eyebrow">Про «ГЛИБШЕ»</p><h2>Побачити Україну.  <br><em>Зрозуміти, як вона виникла.</em></h2></div>
@@ -128,8 +385,9 @@
   <nav class="chapter-dock" aria-label="Розділи подорожі" hidden>
     <a href="#top" data-chapter="top"><span>01</span>Море</a>
     <a href="#traces" data-chapter="traces"><span>02</span>Камінь</a>
-    <a href="#worlds" data-chapter="worlds"><span>03</span>Відкриття</a>
-    <a href="#visit" data-chapter="visit"><span>04</span>Наживо <span aria-hidden="true">↗</span></a>
+    <a href="#map" data-chapter="map"><span>03</span>Мапа</a>
+    <a href="#worlds" data-chapter="worlds"><span>04</span>Відкриття</a>
+    <a href="#visit" data-chapter="visit"><span>05</span>Наживо <span aria-hidden="true">↗</span></a>
   </nav>
   <footer class="footer container"><a class="brand" href="#top">ГЛИБШЕ<span class="brand-dot">.</span></a><span>Історія 01 · Море, якого немає</span><a href="#top">На поверхню <span aria-hidden="true">↑</span></a></footer>
 </body>
